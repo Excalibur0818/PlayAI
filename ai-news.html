@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 早报 | Excalibur0818</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-black': '#0a0a0f',
+                        'cyber-dark': '#12121a',
+                        'cyber-gray': '#1a1a2e',
+                        'neon-green': '#00ff88',
+                        'neon-blue': '#00d4ff',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080',
+                    },
+                    fontFamily: {
+                        'mono': ['Fira Code', 'JetBrains Mono', 'Consolas', 'monospace'],
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            background-color: #0a0a0f;
+            color: #e0e0e0;
+        }
+        
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .nav-immersive {
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
+        }
+        
+        .nav-border::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+        }
+        
+        .glass-card {
+            background: rgba(26, 26, 46, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .neon-border {
+            position: relative;
+        }
+        
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.5), rgba(0, 212, 255, 0.5));
+            background-size: 200% 200%;
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: gradient-rotate 3s ease infinite;
+            filter: blur(2px);
+        }
+        
+        .neon-border:hover::before {
+            opacity: 0.6;
+        }
+        
+        @keyframes gradient-rotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-content {
+            animation: modal-in 0.3s ease-out;
+            overflow-x: hidden;
+        }
+        
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 128, 0.6);
+            border-radius: 3px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(128, 128, 128, 0.8);
+        }
+        
+        @keyframes modal-in {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .tag-new, .tag-hot, .tag-tech {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00ff88, #00d4ff);
+            border-radius: 4px;
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen cyber-grid">
+    <!-- 顶部导航 -->
+    <nav class="nav-immersive fixed top-0 left-0 right-0 z-50">
+        <div class="relative max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="group flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-green/20 to-neon-blue/20 border border-neon-green/30 flex items-center justify-center group-hover:border-neon-green/60 transition-colors">
+                        <span class="text-neon-green font-mono font-bold text-lg">E</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-white font-mono font-bold tracking-wide">EXCALIBUR</div>
+                        <div class="text-[10px] font-mono text-neon-green/70">0818.DEV</div>
+                    </div>
+                </a>
+                
+                <div class="hidden md:flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-black/30">
+                    <div class="flex gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.2s;"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.4s;"></span>
+                    </div>
+                    <span class="text-xs font-mono text-gray-400">AI_NEWS_AGGREGATOR</span>
+                    <span class="text-xs font-mono text-gray-600">|</span>
+                    <span class="text-xs font-mono text-neon-green" id="current-date">--/--</span>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-green/50 transition-all text-sm font-mono flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        返回
+                    </a>
+                    <a href="https://github.com" target="_blank" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-border h-px"></div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="pt-28 pb-16 px-4 min-h-screen">
+        <div class="max-w-7xl mx-auto">
+            <!-- 头部 -->
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-white">AI</span>
+                    <span class="text-neon-blue">早报</span>
+                </h1>
+                <p class="text-gray-400 font-mono">每日 AI 领域最新动态 // AI_NEWS_DAILY</p>
+            </header>
+
+            <!-- 筛选 -->
+            <div class="flex flex-wrap justify-center gap-3 mb-8">
+                <button class="filter-btn active px-4 py-2 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm font-mono transition-all hover:bg-neon-green/20" data-filter="all">全部</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-blue/30 hover:text-neon-blue" data-filter="tech">技术突破</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-purple/30 hover:text-neon-purple" data-filter="product">产品发布</button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-pink/30 hover:text-neon-pink" data-filter="industry">行业动态</button>
+            </div>
+
+            <!-- 资讯网格 -->
+            <div id="news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="py-6 px-4 border-t border-white/5">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span class="font-mono text-neon-green">&lt;/&gt;</span>
+                <span>Built with</span>
+                <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500 animate-pulse"></i>
+                <span>and</span>
+                <i data-lucide="coffee" class="w-4 h-4 text-yellow-500"></i>
+            </div>
+            <div class="text-xs text-gray-600 font-mono">2026 Excalibur0818 | AI_NEWS_V1</div>
+        </div>
+    </footer>
+
+    <!-- 模态框 -->
+    <div id="news-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content glass-card rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto overflow-x-hidden neon-border">
+                <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 border border-white/30 flex items-center justify-center text-white hover:text-neon-green hover:border-neon-green shadow-lg shadow-black/50 transition-all z-10">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const now = new Date();
+        document.getElementById('current-date').textContent = 
+            String(now.getMonth() + 1).padStart(2, '0') + '/' + String(now.getDate()).padStart(2, '0');
+
+        const newsData = [
+            {
+                id: 1,
+                title: "OpenAI 发布 GPT-5 预览版",
+                summary: "OpenAI 展示 GPT-5 早期版本，推理能力提升 40%，支持多模态输入输出。",
+                content: "OpenAI 在今日凌晨的发布会上正式展示了 GPT-5 的早期预览版本。据官方介绍，GPT-5 在多个基准测试中表现出色，推理能力相比 GPT-4 提升了 40%。新模型支持文本、图像、音频和视频的多模态输入输出，上下文窗口扩展至 200 万 token。OpenAI CEO Sam Altman 表示，GPT-5 将在今年第三季度向 Plus 用户开放。",
+                category: "tech",
+                tag: "HOT",
+                tagClass: "tag-hot text-neon-pink",
+                time: "2小时前",
+                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
+                source: "OpenAI Blog"
+            },
+            {
+                id: 2,
+                title: "Google DeepMind 推出 Gemini Ultra",
+                summary: "Google 发布 Gemini Ultra 模型，在 MMLU 测试中首次超越人类专家水平。",
+                content: "Google DeepMind 团队今日发布了 Gemini Ultra，这是 Gemini 系列的最强版本。在 MMLU 测试中，Gemini Ultra 得分达到 90.0%，首次超越了人类专家的 89.8%。该模型在数学、物理、法律等多个领域展现出专家级能力。",
+                category: "tech",
+                tag: "NEW",
+                tagClass: "tag-new text-neon-green",
+                time: "4小时前",
+                image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
+                source: "Google AI"
+            },
+            {
+                id: 3,
+                title: "Anthropic Claude 3 正式开放",
+                summary: "Claude 3 系列模型全面开放 API 访问，包含 Opus、Sonnet 和 Haiku 三个版本。",
+                content: "Anthropic 宣布 Claude 3 系列模型现已全面开放 API 访问。该系列包含三个版本：Opus（最强版）、Sonnet（平衡版）和 Haiku（快速版）。Claude 3 Opus 在多项推理测试中表现优异，特别是在长文本理解和代码生成方面。",
+                category: "product",
+                tag: "NEW",
+                tagClass: "tag-new text-neon-green",
+                time: "6小时前",
+                image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
+                source: "Anthropic"
+            },
+            {
+                id: 4,
+                title: "Meta 开源 Llama 3 700B 版本",
+                summary: "Meta 发布 Llama 3 最大的 700B 参数版本，性能媲美 GPT-4。",
+                content: "Meta AI 今日开源了 Llama 3 的 700B 参数版本，这是该系列最大的模型。在多项基准测试中，Llama 3 700B 的性能已接近 GPT-4 水平。Meta 表示该模型将完全开源，支持商业用途。",
+                category: "tech",
+                tag: "HOT",
+                tagClass: "tag-hot text-neon-pink",
+                time: "8小时前",
+                image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
+                source: "Meta AI"
+            },
+            {
+                id: 5,
+                title: "Midjourney V7 发布，支持视频生成",
+                summary: "Midjourney 推出 V7 版本，新增视频生成功能，画质提升显著。",
+                content: "Midjourney 今日正式发布 V7 版本，最大亮点是新增的视频生成功能。用户现在可以将静态图像转换为 4 秒的高清视频片段。此外，V7 在图像质量上也有显著提升，特别是在人物面部细节和光影效果方面。",
+                category: "product",
+                tag: "NEW",
+                tagClass: "tag-new text-neon-green",
+                time: "10小时前",
+                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
+                source: "Midjourney"
+            },
+            {
+                id: 6,
+                title: "NVIDIA 发布 H200 AI 芯片",
+                summary: "NVIDIA 推出新一代 H200 GPU，AI 推理速度提升 90%。",
+                content: "NVIDIA 在 GTC 大会上发布了新一代 AI 芯片 H200。该芯片采用 HBM3e 内存技术，内存带宽达到 4.8TB/s，相比 H100 提升了 1.4 倍。在 Llama 2 70B 推理测试中，H200 的吞吐量比 H100 提升了 90%。",
+                category: "tech",
+                tag: "HOT",
+                tagClass: "tag-hot text-neon-pink",
+                time: "12小时前",
+                image: "https://images.unsplash.com/photo-1555664424-778a69022365?w=800&q=80",
+                source: "NVIDIA"
+            },
+            {
+                id: 7,
+                title: "欧盟通过 AI 法案最终版本",
+                summary: "欧盟 AI 法案正式通过，对 GPT 等大模型实施分级监管。",
+                content: "欧盟议会今日正式通过了 AI 法案的最终版本。该法案将 AI 系统分为四个风险等级，GPT-4 级别的大模型被归为高影响力通用 AI，需要遵守透明度要求和系统性风险评估。",
+                category: "industry",
+                tag: "IMPORTANT",
+                tagClass: "tag-tech text-neon-blue",
+                time: "14小时前",
+                image: "https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=800&q=80",
+                source: "EU Parliament"
+            },
+            {
+                id: 8,
+                title: "Stability AI 推出 Stable Video 3D",
+                summary: "Stable Video 3D 可将单张图片转换为 3D 视频，效果惊艳。",
+                content: "Stability AI 发布了 Stable Video 3D 模型，该技术可以从单张静态图像生成高质量的 3D 轨道视频。相比之前的 Stable Video，新模型在 3D 一致性和多视角生成方面有显著提升。",
+                category: "product",
+                tag: "NEW",
+                tagClass: "tag-new text-neon-green",
+                time: "16小时前",
+                image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
+                source: "Stability AI"
+            },
+            {
+                id: 9,
+                title: "微软 Copilot 集成 GPT-4 Turbo",
+                summary: "微软宣布 Copilot 全面升级，底层模型切换至 GPT-4 Turbo。",
+                content: "微软今日宣布 Copilot 完成重大升级，底层模型已全面切换至 GPT-4 Turbo。升级后的 Copilot 在代码生成、文档分析和创意写作方面表现大幅提升。免费用户也可使用 GPT-4 Turbo。",
+                category: "product",
+                tag: "HOT",
+                tagClass: "tag-hot text-neon-pink",
+                time: "18小时前",
+                image: "https://images.unsplash.com/photo-1633419461186-7d40a38105ec?w=800&q=80",
+                source: "Microsoft"
+            },
+            {
+                id: 10,
+                title: "苹果展示端侧大模型技术",
+                summary: "苹果在 WWDC 预览中展示 iPhone 端侧运行的大模型技术。",
+                content: "苹果在 WWDC 开发者预览环节中展示了其端侧大模型技术。该技术可在 iPhone 上本地运行 30 亿参数的模型，响应速度比云端方案快 3 倍。苹果强调所有数据处理都在设备本地完成。",
+                category: "tech",
+                tag: "NEW",
+                tagClass: "tag-new text-neon-green",
+                time: "20小时前",
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80",
+                source: "Apple"
+            },
+            {
+                id: 11,
+                title: "xAI 完成 60 亿美元融资",
+                summary: "马斯克旗下 xAI 完成 B 轮融资，估值达 240 亿美元。",
+                content: "埃隆马斯克创立的 AI 公司 xAI 宣布完成 60 亿美元 B 轮融资，投后估值达 240 亿美元。本轮融资由红杉资本、Andreessen Horowitz 等顶级机构领投。xAI 表示资金将用于加速 Grok 模型的训练。",
+                category: "industry",
+                tag: "IMPORTANT",
+                tagClass: "tag-tech text-neon-blue",
+                time: "22小时前",
+                image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
+                source: "xAI"
+            },
+            {
+                id: 12,
+                title: "Runway Gen-3 Alpha 发布",
+                summary: "Runway 推出 Gen-3 Alpha，视频生成质量和时长大幅提升。",
+                content: "Runway 正式发布 Gen-3 Alpha 视频生成模型。新模型支持生成最长 10 秒的高清视频，在动作连贯性和物理仿真方面有显著提升。Runway 表示 Gen-3 采用了全新的视频扩散架构。",
+                category: "product",
+                tag: "HOT",
+                tagClass: "tag-hot text-neon-pink",
+                time: "1天前",
+                image: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&q=80",
+                source: "Runway"
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        function renderNews(filter) {
+            const grid = document.getElementById('news-grid');
+            const filtered = filter === 'all' ? newsData : newsData.filter(function(n) { return n.category === filter; });
+            
+            grid.innerHTML = filtered.map(function(news) {
+                return '<div class="glass-card rounded-xl overflow-hidden neon-border cursor-pointer group" onclick="openModal(' + news.id + ')">' +
+                    '<div class="relative h-40 overflow-hidden">' +
+                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">' +
+                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>' +
+                        '<div class="absolute top-3 left-3">' +
+                            '<span class="' + news.tagClass + ' px-2 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
+                        '</div>' +
+                        '<div class="absolute bottom-3 left-3 right-3">' +
+                            '<span class="text-xs text-gray-400 font-mono">' + news.time + ' · ' + news.source + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="p-4">' +
+                        '<h3 class="text-white font-bold mb-2 line-clamp-2 group-hover:text-neon-blue transition-colors">' + news.title + '</h3>' +
+                        '<p class="text-gray-400 text-sm line-clamp-2">' + news.summary + '</p>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+        function openModal(id) {
+            const news = newsData.find(function(n) { return n.id === id; });
+            if (!news) return;
+            
+            const modal = document.getElementById('news-modal');
+            const body = document.getElementById('modal-body');
+            
+            body.innerHTML = 
+                '<div class="relative">' +
+                    '<div class="h-64 overflow-hidden">' +
+                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover">' +
+                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>' +
+                    '</div>' +
+                    '<div class="p-6">' +
+                        '<div class="flex items-center gap-3 mb-4">' +
+                            '<span class="' + news.tagClass + ' px-3 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
+                            '<span class="text-gray-300 text-sm font-mono">' + news.time + '</span>' +
+                            '<span class="text-gray-600">·</span>' +
+                            '<span class="text-neon-blue text-sm font-mono">' + news.source + '</span>' +
+                        '</div>' +
+                        '<h2 class="text-2xl font-bold text-white mb-4">' + news.title + '</h2>' +
+                        '<div class="prose prose-invert max-w-none">' +
+                            '<p class="text-gray-100 leading-relaxed text-base font-medium">' + news.content + '</p>' +
+                        '</div>' +
+                        '<div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">' +
+                            '<span class="text-xs text-gray-400 font-mono">ID: NEWS-' + String(news.id).padStart(3, '0') + '</span>' +
+                            '<button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-neon-green/20 border border-neon-green/50 text-neon-green hover:bg-neon-green/30 hover:text-white transition-all text-sm font-mono">CLOSE</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('news-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(function(b) {
+                    b.classList.remove('active', 'bg-neon-green/10', 'border-neon-green/30', 'text-neon-green');
+                    b.classList.add('bg-white/5', 'border-white/10', 'text-gray-400');
+                });
+                this.classList.remove('bg-white/5', 'border-white/10', 'text-gray-400');
+                this.classList.add('active', 'bg-neon-green/10', 'border-neon-green/30', 'text-neon-green');
+                currentFilter = this.dataset.filter;
+                renderNews(currentFilter);
+            });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        renderNews('all');
+    </script>
+</body>
+</html>

@@ -1,2 +1,2 @@
-# PlayAI
-Make fun stuff with AI tools.
+# turtle-soup-generator
+turtle soup generator

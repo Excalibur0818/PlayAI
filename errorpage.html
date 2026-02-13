@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误页面 - 海龟汤生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'chinese': ['PingFang SC', 'Microsoft YaHei', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .business-bg {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .error-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="business-bg min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full">
+        <!-- 错误卡片 -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8 card-shadow error-animation">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-black mb-2">页面加载失败</h1>
+                <p class="text-gray-600">抱歉，访问海龟汤生成器时遇到了一些问题</p>
+            </div>
+
+            <!-- 错误详情 -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-black mb-3">错误详情</h2>
+                <div id="errorDetails" class="text-sm text-gray-700 space-y-2">
+                    <!-- 错误信息将通过JavaScript动态插入 -->
+                </div>
+            </div>
+
+            <!-- 常见问题解决 -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-black mb-3">常见问题解决</h2>
+                <div class="space-y-3 text-sm text-gray-700">
+                    <div class="flex items-start">
+                        <span class="text-gray-500 mr-2">•</span>
+                        <div>
+                            <strong class="text-black">网络连接问题</strong><br>
+                            <span>检查网络连接，确保能够访问外部资源</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-gray-500 mr-2">•</span>
+                        <div>
+                            <strong class="text-black">浏览器兼容性问题</strong><br>
+                            <span>使用现代浏览器（Chrome、Firefox、Safari、Edge）并更新到最新版本</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-gray-500 mr-2">•</span>
+                        <div>
+                            <strong class="text-black">JavaScript被禁用</strong><br>
+                            <span>确保浏览器启用了JavaScript</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-gray-500 mr-2">•</span>
+                        <div>
+                            <strong class="text-black">本地AI模式问题</strong><br>
+                            <span>如使用本地AI模式，建议切换到API模式（MiniMax或DeepSeek）</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="retry()" class="px-6 py-3 bg-black hover:bg-white text-white hover:text-black font-medium rounded-lg transition-all border-2 border-black">
+                    重新加载
+                </button>
+                <a href="index.html" class="px-6 py-3 bg-white hover:bg-black text-black hover:text-white font-medium rounded-lg transition-all border-2 border-black text-center">
+                    返回首页
+                </a>
+                <button onclick="showTroubleshooting()" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-black font-medium rounded-lg transition-all">
+                    故障排除
+                </button>
+            </div>
+        </div>
+
+        <!-- 系统信息 -->
+        <div class="text-center mt-6 text-sm text-gray-500">
+            <p>海龟汤生成器 | 如问题持续，请尝试刷新页面或使用其他浏览器</p>
+        </div>
+    </div>
+
+    <!-- 故障排除弹窗 -->
+    <div id="troubleshootingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 class="text-lg font-semibold text-black mb-4">故障排除指南</h3>
+            <div class="space-y-3 text-sm text-gray-700">
+                <div>
+                    <strong class="text-black">1. 清除浏览器缓存</strong><br>
+                    <span>按 Ctrl+Shift+Delete (Windows) 或 Cmd+Shift+Delete (Mac) 清除缓存</span>
+                </div>
+                <div>
+                    <strong class="text-black">2. 禁用浏览器扩展</strong><br>
+                    <span>某些广告拦截器或安全扩展可能影响页面加载</span>
+                </div>
+                <div>
+                    <strong class="text-black">3. 检查网络环境</strong><br>
+                    <span>尝试访问其他网站，确认网络连接正常</span>
+                </div>
+                <div>
+                    <strong class="text-black">4. 切换网络</strong><br>
+                    <span>尝试切换到移动热点或其他网络环境</span>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="hideTroubleshooting()" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-800">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取URL参数中的错误信息
+        function getErrorInfo() {
+            const params = new URLSearchParams(window.location.search);
+            const error = params.get('error') || '未知错误';
+            const message = params.get('message') || '页面加载过程中发生了未知错误';
+            
+            return { error, message };
+        }
+
+        // 显示错误信息
+        function displayError() {
+            const errorInfo = getErrorInfo();
+            const errorDetails = document.getElementById('errorDetails');
+            
+            errorDetails.innerHTML = `
+                <div class="space-y-2">
+                    <div><strong class="text-black">错误类型:</strong> ${errorInfo.error}</div>
+                    <div><strong class="text-black">错误描述:</strong> ${errorInfo.message}</div>
+                    <div><strong class="text-black">发生时间:</strong> ${new Date().toLocaleString('zh-CN')}</div>
+                    <div><strong class="text-black">浏览器:</strong> ${navigator.userAgent.split(' ').pop()}</div>
+                </div>
+            `;
+        }
+
+        // 重新加载页面
+        function retry() {
+            window.location.reload();
+        }
+
+        // 显示故障排除弹窗
+        function showTroubleshooting() {
+            document.getElementById('troubleshootingModal').classList.remove('hidden');
+            document.getElementById('troubleshootingModal').classList.add('flex');
+        }
+
+        // 隐藏故障排除弹窗
+        function hideTroubleshooting() {
+            document.getElementById('troubleshootingModal').classList.add('hidden');
+            document.getElementById('troubleshootingModal').classList.remove('flex');
+        }
+
+        // 页面加载完成后显示错误信息
+        document.addEventListener('DOMContentLoaded', function() {
+            displayError();
+        });
+
+        // 键盘事件处理
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideTroubleshooting();
+            }
+            if (e.key === 'F5' || (e.key === 'r' && e.ctrlKey)) {
+                e.preventDefault();
+                retry();
+            }
+        });
+    </script>
+</body>
+</html>

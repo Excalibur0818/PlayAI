@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海龟汤生成器 | Excalibur0818</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-black': '#0a0a0f',
+                        'cyber-dark': '#12121a',
+                        'cyber-gray': '#1a1a2e',
+                        'neon-green': '#00ff88',
+                        'neon-blue': '#00d4ff',
+                        'neon-purple': '#a855f7',
+                        'neon-pink': '#ff0080',
+                    },
+                    fontFamily: {
+                        'mono': ['Fira Code', 'JetBrains Mono', 'Consolas', 'monospace'],
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            background-color: #0a0a0f;
+            color: #e0e0e0;
+        }
+        
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* 导航栏样式 */
+        .nav-immersive {
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.9), transparent);
+        }
+        
+        .nav-border::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+        }
+        
+        /* 玻璃态卡片 */
+        .glass-card {
+            background: rgba(26, 26, 46, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+        
+        /* 霓虹边框 */
+        .neon-border {
+            position: relative;
+        }
+        
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.5), rgba(0, 212, 255, 0.5));
+            background-size: 200% 200%;
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: gradient-rotate 3s ease infinite;
+            filter: blur(2px);
+        }
+        
+        .neon-border:hover::before {
+            opacity: 0.6;
+        }
+        
+        @keyframes gradient-rotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 按钮样式 */
+        .btn-cyber {
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cyber:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-cyber:hover::before {
+            left: 100%;
+        }
+        
+        /* 输入框样式 */
+        .input-cyber {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .input-cyber:focus {
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+            outline: none;
+        }
+        
+        .input-cyber option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+        
+        /* 加载动画 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin-cyber {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* 结果卡片动画 */
+        .result-card {
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 霓虹文字 */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        /* 扫描线效果 */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 100;
+            animation: scan 8s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00ff88, #00d4ff);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen cyber-grid">
+    <!-- 扫描线 -->
+    <div class="scan-line"></div>
+
+    <!-- 顶部导航 -->
+    <nav class="nav-immersive fixed top-0 left-0 right-0 z-50">
+        <div class="relative max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="group flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-green/20 to-neon-blue/20 border border-neon-green/30 flex items-center justify-center group-hover:border-neon-green/60 transition-colors">
+                        <span class="text-neon-green font-mono font-bold text-lg">E</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-white font-mono font-bold tracking-wide">EXCALIBUR</div>
+                        <div class="text-[10px] font-mono text-neon-green/70">0818.DEV</div>
+                    </div>
+                </a>
+                
+                <!-- 中间状态 -->
+                <div class="hidden md:flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-black/30">
+                    <div class="flex gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.2s;"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.4s;"></span>
+                    </div>
+                    <span class="text-xs font-mono text-gray-400">TURTLE_SOUP_GENERATOR</span>
+                    <span class="text-xs font-mono text-gray-600">|</span>
+                    <span class="text-xs font-mono text-neon-green">v2.0</span>
+                </div>
+                
+                <!-- 右侧 -->
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-green/50 transition-all text-sm font-mono flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        返回
+                    </a>
+                    <a href="https://github.com" target="_blank" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-border h-px"></div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="pt-28 pb-16 px-4 min-h-screen">
+        <div class="max-w-4xl mx-auto">
+            <!-- 头部 -->
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="text-white">海龟汤</span>
+                    <span class="text-neon-green neon-text">生成器</span>
+                </h1>
+                <p class="text-gray-400 font-mono">
+                    AI 驱动的逻辑推理谜题生成平台 // TURTLE_SOUP_GENERATOR_V2
+                </p>
+            </header>
+
+            <!-- API配置卡片 -->
+            <div class="glass-card rounded-2xl p-6 mb-6 neon-border">
+                <div class="flex items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                    <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center">
+                        <i data-lucide="key-round" class="w-5 h-5 text-neon-green"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">API 密钥配置</h2>
+                        <p class="text-xs text-gray-500 font-mono">CONFIGURE_API_KEY</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-mono flex items-center gap-2">
+                            <i data-lucide="cpu" class="w-4 h-4 text-neon-blue"></i>
+                            AI_PROVIDER
+                        </label>
+                        <select id="apiProvider" class="w-full px-4 py-3 rounded-lg input-cyber font-mono text-sm">
+                            <option value="minimax">MiniMax-M2.1</option>
+                            <option value="deepseek" selected>DeepSeek-3.2</option>
+                            <option value="glm">GLM-5</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input 
+                            type="password" 
+                            id="apiKeyInput" 
+                            placeholder="INPUT_API_KEY" 
+                            class="flex-1 px-4 py-3 rounded-lg input-cyber font-mono text-sm"
+                        >
+                        <button 
+                            id="saveApiKey" 
+                            class="px-6 py-3 rounded-lg btn-cyber font-mono text-sm flex items-center justify-center gap-2"
+                        >
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            SAVE
+                        </button>
+                    </div>
+                    
+                    <p class="text-sm">
+                        <a href="#" id="apiKeyLink" target="_blank" class="text-neon-blue hover:text-neon-green transition-colors flex items-center gap-1 font-mono text-xs">
+                            <i data-lucide="external-link" class="w-3 h-3"></i>
+                            GET_FREE_API_KEY
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 主表单卡片 -->
+            <div class="glass-card rounded-2xl p-6 mb-6 neon-border">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div class="w-10 h-10 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                        <i data-lucide="settings-2" class="w-5 h-5 text-neon-blue"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">谜题配置</h2>
+                        <p class="text-xs text-gray-500 font-mono">PUZZLE_CONFIGURATION</p>
+                    </div>
+                </div>
+
+                <form id="storyForm" class="space-y-5">
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2 font-mono flex items-center gap-2">
+                                <i data-lucide="soup" class="w-4 h-4 text-neon-green"></i>
+                                PUZZLE_TYPE
+                            </label>
+                            <select id="puzzleType" class="w-full px-4 py-3 rounded-lg input-cyber font-mono text-sm">
+                                <option value="clear">清汤 (CLEAR_SOUP)</option>
+                                <option value="red">红汤 (RED_SOUP)</option>
+                                <option value="black">黑汤 (BLACK_SOUP)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2 font-mono flex items-center gap-2">
+                                <i data-lucide="gauge" class="w-4 h-4 text-neon-purple"></i>
+                                DIFFICULTY
+                            </label>
+                            <select id="difficulty" class="w-full px-4 py-3 rounded-lg input-cyber font-mono text-sm">
+                                <option value="easy">EASY (简单)</option>
+                                <option value="medium">MEDIUM (中等)</option>
+                                <option value="hard">HARD (困难)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        id="generateBtn"
+                        class="w-full py-4 rounded-lg btn-cyber font-mono font-bold text-lg flex items-center justify-center gap-3"
+                    >
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        GENERATE_TURTLE_SOUP
+                    </button>
+                </form>
+            </div>
+
+            <!-- 结果显示区域 -->
+            <div id="storyOutput" class="glass-card rounded-2xl p-6 hidden neon-border result-card">
+                <div class="flex items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                    <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-neon-green"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">生成结果</h3>
+                        <p class="text-xs text-gray-500 font-mono">GENERATION_COMPLETE</p>
+                    </div>
+                </div>
+                
+                <!-- 加载指示器 -->
+                <div id="loadingIndicator" class="text-center py-12 hidden">
+                    <div class="inline-flex flex-col items-center gap-4">
+                        <div class="relative w-12 h-12">
+                            <div class="absolute inset-0 border-2 border-neon-green/20 rounded-full"></div>
+                            <div class="absolute inset-0 border-2 border-neon-green rounded-full border-t-transparent animate-spin-cyber"></div>
+                        </div>
+                        <span class="text-neon-green font-mono text-sm animate-pulse">AI_PROCESSING...</span>
+                    </div>
+                </div>
+
+                <!-- 故事内容 -->
+                <div id="storyContent" class="hidden">
+                    <div class="bg-black/30 rounded-xl p-5 border border-white/10">
+                        <div id="storyText" class="whitespace-pre-wrap text-gray-300 leading-relaxed text-sm font-mono"></div>
+                    </div>
+                    <div class="mt-5 flex justify-center">
+                        <button 
+                            id="exportBtn"
+                            class="px-6 py-3 rounded-lg btn-cyber font-mono text-sm flex items-center gap-2"
+                        >
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            EXPORT_JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 游戏规则卡片 -->
+            <div class="glass-card rounded-2xl p-6 mt-6">
+                <div class="flex items-center gap-3 mb-5 pb-4 border-b border-white/10">
+                    <div class="w-10 h-10 rounded-lg bg-neon-purple/10 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-5 h-5 text-neon-purple"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">游戏规则</h3>
+                        <p class="text-xs text-gray-500 font-mono">GAME_RULES_PROTOCOL</p>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-neon-green">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            <span class="font-mono font-bold">OBJECTIVE</span>
+                        </div>
+                        <p class="text-gray-400">通过有限线索推理出完整故事真相</p>
+                    </div>
+                    
+                    <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-neon-blue">
+                            <i data-lucide="git-branch" class="w-4 h-4"></i>
+                            <span class="font-mono font-bold">PROCESS</span>
+                        </div>
+                        <p class="text-gray-400">出题者描述谜面 → 玩家提问 → 是/否回答 → 推理真相</p>
+                    </div>
+                    
+                    <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-neon-purple">
+                            <i data-lucide="lightbulb" class="w-4 h-4"></i>
+                            <span class="font-mono font-bold">STRATEGY</span>
+                        </div>
+                        <p class="text-gray-400">从简单事实开始，逐步挖掘线索背后的逻辑</p>
+                    </div>
+                    
+                    <div class="p-4 rounded-lg bg-black/20 border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-neon-pink">
+                            <i data-lucide="smile" class="w-4 h-4"></i>
+                            <span class="font-mono font-bold">FUN_FACTOR</span>
+                        </div>
+                        <p class="text-gray-400">有限信息中推理出意想不到的真相</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="py-6 px-4 border-t border-white/5">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span class="font-mono text-neon-green">&lt;/&gt;</span>
+                <span>Built with</span>
+                <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500 animate-pulse"></i>
+                <span>and</span>
+                <i data-lucide="coffee" class="w-4 h-4 text-yellow-500"></i>
+            </div>
+            <div class="text-xs text-gray-600 font-mono">© 2026 Excalibur0818 | TURTLE_SOUP_GENERATOR_V2</div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
