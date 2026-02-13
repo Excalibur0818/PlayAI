@@ -218,11 +218,76 @@
             </header>
 
             <!-- 筛选 -->
-            <div class="flex flex-wrap justify-center gap-3 mb-8">
+            <div class="flex flex-wrap justify-center gap-3 mb-6">
                 <button class="filter-btn active px-4 py-2 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm font-mono transition-all hover:bg-neon-green/20" data-filter="all">全部</button>
                 <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-blue/30 hover:text-neon-blue" data-filter="tech">技术突破</button>
                 <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-purple/30 hover:text-neon-purple" data-filter="product">产品发布</button>
                 <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-pink/30 hover:text-neon-pink" data-filter="industry">行业动态</button>
+            </div>
+
+            <!-- RSS源选择 -->
+            <div class="mb-8 p-4 rounded-xl bg-white/5 border border-white/10">
+                <div class="flex items-center gap-2 mb-3">
+                    <i data-lucide="rss" class="w-4 h-4 text-neon-green"></i>
+                    <span class="text-sm font-mono text-gray-300">选择资讯源</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-4" id="source-selector">
+                    <div class="flex items-center gap-2 source-item">
+                        <label class="source-checkbox cursor-pointer group">
+                            <input type="checkbox" value="jiqizhixin" checked class="hidden peer" data-url="https://www.jiqizhixin.com/rss">
+                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-blue/10 peer-checked:border-neon-blue/50 peer-checked:text-neon-blue group-hover:border-white/30 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-blue"></span>
+                                机器之心
+                            </span>
+                        </label>
+                        <button onclick="copyRSSUrl('jiqizhixin')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-blue hover:border-neon-blue/50 transition-all" title="复制RSS地址">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 source-item">
+                        <label class="source-checkbox cursor-pointer group">
+                            <input type="checkbox" value="openai" checked class="hidden peer" data-url="https://openai.com/blog/rss.xml">
+                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-purple/10 peer-checked:border-neon-purple/50 peer-checked:text-neon-purple group-hover:border-white/30 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-purple"></span>
+                                OpenAI
+                            </span>
+                        </label>
+                        <button onclick="copyRSSUrl('openai')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-purple hover:border-neon-purple/50 transition-all" title="复制RSS地址">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 source-item">
+                        <label class="source-checkbox cursor-pointer group">
+                            <input type="checkbox" value="googleai" checked class="hidden peer" data-url="https://blog.google/technology/ai/rss/">
+                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-pink/10 peer-checked:border-neon-pink/50 peer-checked:text-neon-pink group-hover:border-white/30 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-pink"></span>
+                                Google AI
+                            </span>
+                        </label>
+                        <button onclick="copyRSSUrl('googleai')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-pink hover:border-neon-pink/50 transition-all" title="复制RSS地址">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="flex justify-center mt-4">
+                    <button id="refresh-btn" onclick="fetchAllNews()" class="px-6 py-2 rounded-lg bg-neon-green/10 border border-neon-green/30 text-neon-green hover:bg-neon-green/20 transition-all text-sm font-mono flex items-center gap-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4" id="refresh-icon"></i>
+                        <span>刷新资讯</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 加载状态 -->
+            <div id="loading-status" class="hidden mb-8">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="flex gap-2">
+                        <span class="w-3 h-3 rounded-full bg-neon-green animate-bounce"></span>
+                        <span class="w-3 h-3 rounded-full bg-neon-blue animate-bounce" style="animation-delay: 0.1s;"></span>
+                        <span class="w-3 h-3 rounded-full bg-neon-purple animate-bounce" style="animation-delay: 0.2s;"></span>
+                    </div>
+                    <span class="text-sm font-mono text-gray-400">正在获取最新资讯...</span>
+                </div>
             </div>
 
             <!-- 资讯网格 -->
@@ -248,11 +313,11 @@
     <div id="news-modal" class="fixed inset-0 z-[100] hidden">
         <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
         <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content glass-card rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto overflow-x-hidden neon-border">
-                <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 border border-white/30 flex items-center justify-center text-white hover:text-neon-green hover:border-neon-green shadow-lg shadow-black/50 transition-all z-10">
+            <div class="modal-content glass-card rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto overflow-x-hidden neon-border relative">
+                <button onclick="closeModal()" class="sticky top-4 float-right mr-4 w-10 h-10 rounded-full bg-black/80 border border-white/30 flex items-center justify-center text-white hover:text-neon-green hover:border-neon-green shadow-lg shadow-black/50 transition-all z-50">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
-                <div id="modal-body"></div>
+                <div id="modal-body" class="clear-both"></div>
             </div>
         </div>
     </div>
@@ -264,7 +329,162 @@
         document.getElementById('current-date').textContent = 
             String(now.getMonth() + 1).padStart(2, '0') + '/' + String(now.getDate()).padStart(2, '0');
 
-        const newsData = [
+        // RSS源配置
+        const RSS_SOURCES = {
+            jiqizhixin: {
+                name: '机器之心',
+                url: 'https://www.jiqizhixin.com/rss',
+                category: 'tech',
+                color: 'neon-blue'
+            },
+            openai: {
+                name: 'OpenAI',
+                url: 'https://openai.com/blog/rss.xml',
+                category: 'tech',
+                color: 'neon-purple'
+            },
+            googleai: {
+                name: 'Google AI',
+                url: 'https://blog.google/technology/ai/rss/',
+                category: 'tech',
+                color: 'neon-pink'
+            },
+
+        };
+
+        let newsData = [];
+        let currentFilter = 'all';
+
+        // 提取图片URL（仅从 thumbnail 获取）
+        function extractImage(item) {
+            return item.thumbnail || null;
+        }
+
+        // 获取默认图片//https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80
+        function getDefaultImage(source) {
+            const defaults = {
+                '机器之心': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
+                'OpenAI': 'https://images.unsplash.com/photo-1676299081847-824916de030a?w=800&q=80',
+                'Google AI': 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=800&q=80'
+            };
+            return defaults[source] || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80';
+        }
+
+        // 获取文本摘要
+        function extractSummary(content, maxLength = 80) {
+            if (!content) return '暂无摘要';
+            // 去除HTML标签
+            const text = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        // 计算相对时间
+        function getRelativeTime(pubDate) {
+            const date = new Date(pubDate);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        // 获取选中的RSS源
+        function getSelectedSources() {
+            const checkboxes = document.querySelectorAll('#source-selector input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // 获取单个RSS源数据
+        async function fetchRSS(sourceKey) {
+            const source = RSS_SOURCES[sourceKey];
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}&count=10`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                if (data.status !== 'ok') {
+                    throw new Error(data.message || 'RSS parse failed');
+                }
+
+                return data.items.map((item, index) => {
+                    const imgUrl = extractImage(item) || getDefaultImage(source.name);
+                    
+                    return {
+                        id: `${sourceKey}-${index}`,
+                        title: item.title,
+                        summary: extractSummary(item.description || item.content),
+                        content: item.description || item.content || '暂无内容',
+                        category: source.category,
+                        tag: index < 3 ? 'HOT' : 'NEW',
+                        tagClass: index < 3 ? 'tag-hot text-neon-pink' : 'tag-new text-neon-green',
+                        time: getRelativeTime(item.pubDate),
+                        image: imgUrl,
+                        source: source.name,
+                        link: item.link,
+                        pubDate: item.pubDate
+                    };
+                });
+            } catch (error) {
+                console.error(`获取 ${source.name} 失败:`, error);
+                return [];
+            }
+        }
+
+        // 获取所有新闻
+        async function fetchAllNews() {
+            const loadingEl = document.getElementById('loading-status');
+            const refreshIcon = document.getElementById('refresh-icon');
+            const selectedSources = getSelectedSources();
+
+            if (selectedSources.length === 0) {
+                newsData = [];
+                renderNews(currentFilter);
+                return;
+            }
+
+            // 显示加载状态
+            loadingEl.classList.remove('hidden');
+            refreshIcon.classList.add('animate-spin');
+            document.getElementById('news-grid').innerHTML = '';
+
+            try {
+                const results = await Promise.all(
+                    selectedSources.map(key => fetchRSS(key))
+                );
+                
+                // 合并并排序（按时间）
+                newsData = results
+                    .flat()
+                    .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+                    .slice(0, 40); // 最多显示40条
+
+                renderNews(currentFilter);
+            } catch (error) {
+                console.error('获取新闻失败:', error);
+                document.getElementById('news-grid').innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-gray-400 font-mono mb-2">获取新闻失败</div>
+                        <div class="text-sm text-gray-600">请稍后重试</div>
+                    </div>
+                `;
+            } finally {
+                loadingEl.classList.add('hidden');
+                refreshIcon.classList.remove('animate-spin');
+                lucide.createIcons();
+            }
+        }
+
+        // 保留原始默认数据（作为后备）
+        const defaultNewsData = [
             {
                 id: 1,
                 title: "OpenAI 发布 GPT-5 预览版",
@@ -411,16 +631,14 @@
             }
         ];
 
-        let currentFilter = 'all';
-
         function renderNews(filter) {
             const grid = document.getElementById('news-grid');
             const filtered = filter === 'all' ? newsData : newsData.filter(function(n) { return n.category === filter; });
             
             grid.innerHTML = filtered.map(function(news) {
-                return '<div class="glass-card rounded-xl overflow-hidden neon-border cursor-pointer group" onclick="openModal(' + news.id + ')">' +
+                return '<div class="glass-card rounded-xl overflow-hidden neon-border cursor-pointer group" onclick="openModal(\'' + news.id + '\')">' +
                     '<div class="relative h-40 overflow-hidden">' +
-                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">' +
+                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.src=\'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80\'" referrerpolicy="no-referrer">' +
                         '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>' +
                         '<div class="absolute top-3 left-3">' +
                             '<span class="' + news.tagClass + ' px-2 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
@@ -440,19 +658,19 @@
         }
 
         function openModal(id) {
-            const news = newsData.find(function(n) { return n.id === id; });
+            const news = newsData.find(function(n) { return n.id == id; });
             if (!news) return;
             
             const modal = document.getElementById('news-modal');
             const body = document.getElementById('modal-body');
             
             body.innerHTML = 
-                '<div class="relative">' +
-                    '<div class="h-64 overflow-hidden">' +
-                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover">' +
-                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>' +
+                '<div class="relative bg-cyber-black">' +
+                    '<div class="h-64 overflow-hidden relative">' +
+                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80\'" referrerpolicy="no-referrer">' +
+                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-transparent to-transparent"></div>' +
                     '</div>' +
-                    '<div class="p-6">' +
+                    '<div class="p-6 relative bg-cyber-black">' +
                         '<div class="flex items-center gap-3 mb-4">' +
                             '<span class="' + news.tagClass + ' px-3 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
                             '<span class="text-gray-300 text-sm font-mono">' + news.time + '</span>' +
@@ -460,11 +678,9 @@
                             '<span class="text-neon-blue text-sm font-mono">' + news.source + '</span>' +
                         '</div>' +
                         '<h2 class="text-2xl font-bold text-white mb-4">' + news.title + '</h2>' +
-                        '<div class="prose prose-invert max-w-none">' +
-                            '<p class="text-gray-100 leading-relaxed text-base font-medium">' + news.content + '</p>' +
-                        '</div>' +
+                        '<div class="text-white leading-relaxed text-base">' + news.content + '</div>' +
                         '<div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">' +
-                            '<span class="text-xs text-gray-400 font-mono">ID: NEWS-' + String(news.id).padStart(3, '0') + '</span>' +
+                            '<span class="text-xs text-gray-400 font-mono">ID: ' + news.id + '</span>' +
                             '<button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-neon-green/20 border border-neon-green/50 text-neon-green hover:bg-neon-green/30 hover:text-white transition-all text-sm font-mono">CLOSE</button>' +
                         '</div>' +
                     '</div>' +
@@ -481,6 +697,50 @@
             document.body.style.overflow = '';
         }
 
+        // 复制RSS地址
+        async function copyRSSUrl(sourceKey) {
+            const url = RSS_SOURCES[sourceKey].url;
+            const btn = document.querySelector(`button[onclick="copyRSSUrl('${sourceKey}')"]`);
+            const icon = btn.querySelector('i');
+            
+            try {
+                await navigator.clipboard.writeText(url);
+                // 切换为成功图标
+                icon.setAttribute('data-lucide', 'check');
+                btn.classList.add('text-neon-green', 'border-neon-green/50');
+                btn.classList.remove('text-gray-400');
+                lucide.createIcons();
+                
+                // 2秒后恢复
+                setTimeout(() => {
+                    icon.setAttribute('data-lucide', 'copy');
+                    btn.classList.remove('text-neon-green', 'border-neon-green/50');
+                    btn.classList.add('text-gray-400');
+                    lucide.createIcons();
+                }, 2000);
+            } catch (err) {
+                // 降级方案
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                icon.setAttribute('data-lucide', 'check');
+                btn.classList.add('text-neon-green');
+                lucide.createIcons();
+                setTimeout(() => {
+                    icon.setAttribute('data-lucide', 'copy');
+                    btn.classList.remove('text-neon-green');
+                    lucide.createIcons();
+                }, 2000);
+            }
+        }
+
+        // 筛选按钮事件
         document.querySelectorAll('.filter-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filter-btn').forEach(function(b) {
@@ -494,11 +754,19 @@
             });
         });
 
+        // RSS源选择器事件
+        document.querySelectorAll('#source-selector input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                fetchAllNews();
+            });
+        });
+
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeModal();
         });
 
-        renderNews('all');
+        // 页面加载时获取新闻
+        fetchAllNews();
     </script>
 </body>
 </html>
