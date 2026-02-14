@@ -363,7 +363,9 @@
 
         // RSS 代理配置
         // 使用自建 Cloudflare Worker 代理（无缓存，无限制）
-        const RSS_PROXY = 'https://rss-proxy.564695155.workers.dev/?url=';
+        //const RSS_PROXY = 'https://rss-proxy.564695155.workers.dev/?url=';
+        // 使用 Vercel Serverless Function（无缓存，无限制）
+        const RSS_PROXY = 'https://play-ai-boki.vercel.app/api/rss-proxy?url=';
 
         // RSS源配置
         const RSS_SOURCES = {
