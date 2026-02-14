@@ -98,6 +98,15 @@
             100% { background-position: 0% 50%; }
         }
         
+        @keyframes fade-in {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
         .modal-overlay {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -268,6 +277,18 @@
                             <i data-lucide="copy" class="w-4 h-4"></i>
                         </button>
                     </div>
+                    <div class="flex items-center gap-2 source-item">
+                        <label class="source-checkbox cursor-pointer group">
+                            <input type="checkbox" value="infoq" checked class="hidden peer" data-url="https://www.infoq.cn/feed">
+                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-green/10 peer-checked:border-neon-green/50 peer-checked:text-neon-green group-hover:border-white/30 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-green"></span>
+                                InfoQ
+                            </span>
+                        </label>
+                        <button onclick="copyRSSUrl('infoq')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-green hover:border-neon-green/50 transition-all" title="复制RSS地址">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
 
                 </div>
                 <div class="flex justify-center mt-4">
@@ -287,6 +308,17 @@
                         <span class="w-3 h-3 rounded-full bg-neon-purple animate-bounce" style="animation-delay: 0.2s;"></span>
                     </div>
                     <span class="text-sm font-mono text-gray-400">正在获取最新资讯...</span>
+                </div>
+            </div>
+
+            <!-- 刷新结果提示 -->
+            <div id="refresh-toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 glass-card rounded-xl px-6 py-4 border border-neon-green/30 shadow-lg shadow-neon-green/10 animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-neon-green"></i>
+                    <div id="toast-content" class="text-sm font-mono"></div>
+                    <button onclick="hideToast()" class="ml-2 text-gray-400 hover:text-white transition-colors">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>
 
@@ -329,6 +361,10 @@
         document.getElementById('current-date').textContent = 
             String(now.getMonth() + 1).padStart(2, '0') + '/' + String(now.getDate()).padStart(2, '0');
 
+        // RSS 代理配置
+        // 使用自建 Cloudflare Worker 代理（无缓存，无限制）
+        const RSS_PROXY = 'https://rss-proxy.564695155.workers.dev/?url=';
+
         // RSS源配置
         const RSS_SOURCES = {
             jiqizhixin: {
@@ -349,7 +385,12 @@
                 category: 'tech',
                 color: 'neon-pink'
             },
-
+            infoq: {
+                name: 'InfoQ',
+                url: 'https://www.infoq.cn/feed',
+                category: 'tech',
+                color: 'neon-green'
+            }
         };
 
         let newsData = [];
@@ -365,7 +406,8 @@
             const defaults = {
                 '机器之心': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
                 'OpenAI': 'https://images.unsplash.com/photo-1676299081847-824916de030a?w=800&q=80',
-                'Google AI': 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=800&q=80'
+                'Google AI': 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=800&q=80',
+                'InfoQ': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80'
             };
             return defaults[source] || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80';
         }
@@ -401,28 +443,34 @@
             return Array.from(checkboxes).map(cb => cb.value);
         }
 
-        // 获取单个RSS源数据
+        /**
+         * 获取单个RSS源数据
+         * @param {string} sourceKey - RSS源标识
+         * @returns {Object} - { success: boolean, items: Array, error: string, name: string }
+         */
         async function fetchRSS(sourceKey) {
             const source = RSS_SOURCES[sourceKey];
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}&count=10`;
+            const apiUrl = `${RSS_PROXY}${encodeURIComponent(source.url)}&count=10`;
             
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: 网络请求失败`);
+                }
                 const data = await response.json();
                 
                 if (data.status !== 'ok') {
-                    throw new Error(data.message || 'RSS parse failed');
+                    throw new Error(data.message || 'RSS解析失败');
                 }
 
-                return data.items.map((item, index) => {
+                const items = data.items.map((item, index) => {
                     const imgUrl = extractImage(item) || getDefaultImage(source.name);
                     
                     return {
                         id: `${sourceKey}-${index}`,
                         title: item.title,
                         summary: extractSummary(item.description || item.content),
-                        content: item.description || item.content || '暂无内容',
+                        content: item.content || item.description || '暂无内容',
                         category: source.category,
                         tag: index < 3 ? 'HOT' : 'NEW',
                         tagClass: index < 3 ? 'tag-hot text-neon-pink' : 'tag-new text-neon-green',
@@ -433,13 +481,17 @@
                         pubDate: item.pubDate
                     };
                 });
+                
+                return { success: true, items: items, error: null, name: source.name };
             } catch (error) {
                 console.error(`获取 ${source.name} 失败:`, error);
-                return [];
+                return { success: false, items: [], error: error.message, name: source.name };
             }
         }
 
-        // 获取所有新闻
+        /**
+         * 获取所有新闻并显示详细状态
+         */
         async function fetchAllNews() {
             const loadingEl = document.getElementById('loading-status');
             const refreshIcon = document.getElementById('refresh-icon');
@@ -448,10 +500,10 @@
             if (selectedSources.length === 0) {
                 newsData = [];
                 renderNews(currentFilter);
+                showToast('请至少选择一个资讯源', 'warning');
                 return;
             }
 
-            // 显示加载状态
             loadingEl.classList.remove('hidden');
             refreshIcon.classList.add('animate-spin');
             document.getElementById('news-grid').innerHTML = '';
@@ -461,21 +513,51 @@
                     selectedSources.map(key => fetchRSS(key))
                 );
                 
-                // 合并并排序（按时间）
-                newsData = results
-                    .flat()
+                const successList = [];
+                const failedList = [];
+                let allItems = [];
+                
+                results.forEach(result => {
+                    if (result.success) {
+                        successList.push({ name: result.name, count: result.items.length });
+                        allItems = allItems.concat(result.items);
+                    } else {
+                        failedList.push({ name: result.name, error: result.error });
+                    }
+                });
+                
+                newsData = allItems
                     .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
-                    .slice(0, 40); // 最多显示40条
+                    .slice(0, 40);
 
                 renderNews(currentFilter);
+                
+                const totalCount = newsData.length;
+                const successDetails = successList.map(r => 
+                    `<span class="text-neon-green">${r.name}</span>: ${r.count}条`
+                );
+                const failedDetails = failedList.map(r => 
+                    `<span class="text-neon-pink">${r.name}</span>: ${r.error}`
+                );
+                
+                const allDetails = [...successDetails, ...failedDetails].join(' | ');
+                
+                if (failedList.length === 0) {
+                    showToast(`共获取 <span class="text-neon-green font-bold">${totalCount}</span> 条资讯<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'success');
+                } else if (successList.length === 0) {
+                    showToast(`所有资讯源获取失败<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'error');
+                } else {
+                    showToast(`共获取 <span class="text-neon-green font-bold">${totalCount}</span> 条资讯，<span class="text-neon-pink">${failedList.length}</span> 个源失败<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'warning');
+                }
             } catch (error) {
                 console.error('获取新闻失败:', error);
                 document.getElementById('news-grid').innerHTML = `
                     <div class="col-span-full text-center py-12">
                         <div class="text-gray-400 font-mono mb-2">获取新闻失败</div>
-                        <div class="text-sm text-gray-600">请稍后重试</div>
+                        <div class="text-sm text-gray-600">${error.message || '请稍后重试'}</div>
                     </div>
                 `;
+                showToast(`获取资讯失败: ${error.message || '未知错误'}`, 'error');
             } finally {
                 loadingEl.classList.add('hidden');
                 refreshIcon.classList.remove('animate-spin');
@@ -483,153 +565,55 @@
             }
         }
 
-        // 保留原始默认数据（作为后备）
-        const defaultNewsData = [
-            {
-                id: 1,
-                title: "OpenAI 发布 GPT-5 预览版",
-                summary: "OpenAI 展示 GPT-5 早期版本，推理能力提升 40%，支持多模态输入输出。",
-                content: "OpenAI 在今日凌晨的发布会上正式展示了 GPT-5 的早期预览版本。据官方介绍，GPT-5 在多个基准测试中表现出色，推理能力相比 GPT-4 提升了 40%。新模型支持文本、图像、音频和视频的多模态输入输出，上下文窗口扩展至 200 万 token。OpenAI CEO Sam Altman 表示，GPT-5 将在今年第三季度向 Plus 用户开放。",
-                category: "tech",
-                tag: "HOT",
-                tagClass: "tag-hot text-neon-pink",
-                time: "2小时前",
-                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
-                source: "OpenAI Blog"
-            },
-            {
-                id: 2,
-                title: "Google DeepMind 推出 Gemini Ultra",
-                summary: "Google 发布 Gemini Ultra 模型，在 MMLU 测试中首次超越人类专家水平。",
-                content: "Google DeepMind 团队今日发布了 Gemini Ultra，这是 Gemini 系列的最强版本。在 MMLU 测试中，Gemini Ultra 得分达到 90.0%，首次超越了人类专家的 89.8%。该模型在数学、物理、法律等多个领域展现出专家级能力。",
-                category: "tech",
-                tag: "NEW",
-                tagClass: "tag-new text-neon-green",
-                time: "4小时前",
-                image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
-                source: "Google AI"
-            },
-            {
-                id: 3,
-                title: "Anthropic Claude 3 正式开放",
-                summary: "Claude 3 系列模型全面开放 API 访问，包含 Opus、Sonnet 和 Haiku 三个版本。",
-                content: "Anthropic 宣布 Claude 3 系列模型现已全面开放 API 访问。该系列包含三个版本：Opus（最强版）、Sonnet（平衡版）和 Haiku（快速版）。Claude 3 Opus 在多项推理测试中表现优异，特别是在长文本理解和代码生成方面。",
-                category: "product",
-                tag: "NEW",
-                tagClass: "tag-new text-neon-green",
-                time: "6小时前",
-                image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
-                source: "Anthropic"
-            },
-            {
-                id: 4,
-                title: "Meta 开源 Llama 3 700B 版本",
-                summary: "Meta 发布 Llama 3 最大的 700B 参数版本，性能媲美 GPT-4。",
-                content: "Meta AI 今日开源了 Llama 3 的 700B 参数版本，这是该系列最大的模型。在多项基准测试中，Llama 3 700B 的性能已接近 GPT-4 水平。Meta 表示该模型将完全开源，支持商业用途。",
-                category: "tech",
-                tag: "HOT",
-                tagClass: "tag-hot text-neon-pink",
-                time: "8小时前",
-                image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
-                source: "Meta AI"
-            },
-            {
-                id: 5,
-                title: "Midjourney V7 发布，支持视频生成",
-                summary: "Midjourney 推出 V7 版本，新增视频生成功能，画质提升显著。",
-                content: "Midjourney 今日正式发布 V7 版本，最大亮点是新增的视频生成功能。用户现在可以将静态图像转换为 4 秒的高清视频片段。此外，V7 在图像质量上也有显著提升，特别是在人物面部细节和光影效果方面。",
-                category: "product",
-                tag: "NEW",
-                tagClass: "tag-new text-neon-green",
-                time: "10小时前",
-                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
-                source: "Midjourney"
-            },
-            {
-                id: 6,
-                title: "NVIDIA 发布 H200 AI 芯片",
-                summary: "NVIDIA 推出新一代 H200 GPU，AI 推理速度提升 90%。",
-                content: "NVIDIA 在 GTC 大会上发布了新一代 AI 芯片 H200。该芯片采用 HBM3e 内存技术，内存带宽达到 4.8TB/s，相比 H100 提升了 1.4 倍。在 Llama 2 70B 推理测试中，H200 的吞吐量比 H100 提升了 90%。",
-                category: "tech",
-                tag: "HOT",
-                tagClass: "tag-hot text-neon-pink",
-                time: "12小时前",
-                image: "https://images.unsplash.com/photo-1555664424-778a69022365?w=800&q=80",
-                source: "NVIDIA"
-            },
-            {
-                id: 7,
-                title: "欧盟通过 AI 法案最终版本",
-                summary: "欧盟 AI 法案正式通过，对 GPT 等大模型实施分级监管。",
-                content: "欧盟议会今日正式通过了 AI 法案的最终版本。该法案将 AI 系统分为四个风险等级，GPT-4 级别的大模型被归为高影响力通用 AI，需要遵守透明度要求和系统性风险评估。",
-                category: "industry",
-                tag: "IMPORTANT",
-                tagClass: "tag-tech text-neon-blue",
-                time: "14小时前",
-                image: "https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=800&q=80",
-                source: "EU Parliament"
-            },
-            {
-                id: 8,
-                title: "Stability AI 推出 Stable Video 3D",
-                summary: "Stable Video 3D 可将单张图片转换为 3D 视频，效果惊艳。",
-                content: "Stability AI 发布了 Stable Video 3D 模型，该技术可以从单张静态图像生成高质量的 3D 轨道视频。相比之前的 Stable Video，新模型在 3D 一致性和多视角生成方面有显著提升。",
-                category: "product",
-                tag: "NEW",
-                tagClass: "tag-new text-neon-green",
-                time: "16小时前",
-                image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
-                source: "Stability AI"
-            },
-            {
-                id: 9,
-                title: "微软 Copilot 集成 GPT-4 Turbo",
-                summary: "微软宣布 Copilot 全面升级，底层模型切换至 GPT-4 Turbo。",
-                content: "微软今日宣布 Copilot 完成重大升级，底层模型已全面切换至 GPT-4 Turbo。升级后的 Copilot 在代码生成、文档分析和创意写作方面表现大幅提升。免费用户也可使用 GPT-4 Turbo。",
-                category: "product",
-                tag: "HOT",
-                tagClass: "tag-hot text-neon-pink",
-                time: "18小时前",
-                image: "https://images.unsplash.com/photo-1633419461186-7d40a38105ec?w=800&q=80",
-                source: "Microsoft"
-            },
-            {
-                id: 10,
-                title: "苹果展示端侧大模型技术",
-                summary: "苹果在 WWDC 预览中展示 iPhone 端侧运行的大模型技术。",
-                content: "苹果在 WWDC 开发者预览环节中展示了其端侧大模型技术。该技术可在 iPhone 上本地运行 30 亿参数的模型，响应速度比云端方案快 3 倍。苹果强调所有数据处理都在设备本地完成。",
-                category: "tech",
-                tag: "NEW",
-                tagClass: "tag-new text-neon-green",
-                time: "20小时前",
-                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80",
-                source: "Apple"
-            },
-            {
-                id: 11,
-                title: "xAI 完成 60 亿美元融资",
-                summary: "马斯克旗下 xAI 完成 B 轮融资，估值达 240 亿美元。",
-                content: "埃隆马斯克创立的 AI 公司 xAI 宣布完成 60 亿美元 B 轮融资，投后估值达 240 亿美元。本轮融资由红杉资本、Andreessen Horowitz 等顶级机构领投。xAI 表示资金将用于加速 Grok 模型的训练。",
-                category: "industry",
-                tag: "IMPORTANT",
-                tagClass: "tag-tech text-neon-blue",
-                time: "22小时前",
-                image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
-                source: "xAI"
-            },
-            {
-                id: 12,
-                title: "Runway Gen-3 Alpha 发布",
-                summary: "Runway 推出 Gen-3 Alpha，视频生成质量和时长大幅提升。",
-                content: "Runway 正式发布 Gen-3 Alpha 视频生成模型。新模型支持生成最长 10 秒的高清视频，在动作连贯性和物理仿真方面有显著提升。Runway 表示 Gen-3 采用了全新的视频扩散架构。",
-                category: "product",
-                tag: "HOT",
-                tagClass: "tag-hot text-neon-pink",
-                time: "1天前",
-                image: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&q=80",
-                source: "Runway"
+        /**
+         * 显示刷新结果提示
+         * @param {string} message - 提示内容（支持HTML）
+         * @param {string} type - 类型: success/warning/error
+         */
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('refresh-toast');
+            const content = document.getElementById('toast-content');
+            const icon = toast.querySelector('i[data-lucide]');
+            
+            if (!toast || !content) {
+                console.error('Toast elements not found');
+                return;
             }
-        ];
+            
+            content.innerHTML = message;
+            
+            if (icon) {
+                if (type === 'success') {
+                    icon.setAttribute('data-lucide', 'check-circle');
+                    icon.className = 'w-5 h-5 text-neon-green';
+                    toast.classList.remove('border-neon-pink/30', 'border-yellow-500/30');
+                    toast.classList.add('border-neon-green/30');
+                } else if (type === 'warning') {
+                    icon.setAttribute('data-lucide', 'alert-circle');
+                    icon.className = 'w-5 h-5 text-yellow-500';
+                    toast.classList.remove('border-neon-green/30', 'border-neon-pink/30');
+                    toast.classList.add('border-yellow-500/30');
+                } else if (type === 'error') {
+                    icon.setAttribute('data-lucide', 'x-circle');
+                    icon.className = 'w-5 h-5 text-neon-pink';
+                    toast.classList.remove('border-neon-green/30', 'border-yellow-500/30');
+                    toast.classList.add('border-neon-pink/30');
+                }
+            }
+            
+            toast.classList.remove('hidden');
+            lucide.createIcons();
+            
+            setTimeout(() => hideToast(), 5000);
+        }
+
+        /**
+         * 隐藏提示
+         */
+        function hideToast() {
+            const toast = document.getElementById('refresh-toast');
+            toast.classList.add('hidden');
+        }
 
         function renderNews(filter) {
             const grid = document.getElementById('news-grid');
@@ -680,8 +664,10 @@
                         '<h2 class="text-2xl font-bold text-white mb-4">' + news.title + '</h2>' +
                         '<div class="text-white leading-relaxed text-base">' + news.content + '</div>' +
                         '<div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">' +
-                            '<span class="text-xs text-gray-400 font-mono">ID: ' + news.id + '</span>' +
-                            '<button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-neon-green/20 border border-neon-green/50 text-neon-green hover:bg-neon-green/30 hover:text-white transition-all text-sm font-mono">CLOSE</button>' +
+                            '<a href="' + news.link + '" target="_blank" class="px-4 py-2 rounded-lg bg-neon-blue/20 border border-neon-blue/50 text-neon-blue hover:bg-neon-blue/30 hover:text-white transition-all text-sm font-mono flex items-center gap-2">' +
+                                '<i data-lucide="external-link" class="w-4 h-4"></i>查看原文' +
+                            '</a>' +
+                            '<button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-gray-300 hover:text-white hover:border-white/40 transition-all text-sm font-mono">CLOSE</button>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
