@@ -3,169 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 早报 | Excalibur0818</title>
+    <title>AI 早报 | PlayAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        'cyber-black': '#0a0a0f',
-                        'cyber-dark': '#12121a',
-                        'cyber-gray': '#1a1a2e',
-                        'neon-green': '#00ff88',
-                        'neon-blue': '#00d4ff',
-                        'neon-purple': '#a855f7',
-                        'neon-pink': '#ff0080',
-                    },
                     fontFamily: {
-                        'mono': ['Fira Code', 'JetBrains Mono', 'Consolas', 'monospace'],
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        'apple-gray': '#f5f5f7',
+                        'apple-dark': '#1d1d1f',
+                        'apple-light': '#fbfbfd',
+                        'apple-blue': '#0071e3',
+                        'apple-blue-hover': '#0077ed',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
-        
-        body {
-            background-color: #0a0a0f;
-            color: #e0e0e0;
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        
-        .cyber-grid {
-            background-image: 
-                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
-        
-        .nav-immersive {
-            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
+        .hero-gradient {
+            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
         }
-        
-        .nav-border::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
-        .glass-card {
-            background: rgba(26, 26, 46, 0.4);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 255, 136, 0.1);
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .btn-apple {
             transition: all 0.3s ease;
         }
-        
-        .glass-card:hover {
-            border-color: rgba(0, 255, 136, 0.3);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
-            transform: translateY(-5px);
+        .btn-apple:hover {
+            transform: scale(1.02);
         }
-        
-        .neon-border {
+        .nav-link {
             position: relative;
         }
-        
-        .neon-border::before {
+        .nav-link::after {
             content: '';
             position: absolute;
-            inset: -1px;
-            background: linear-gradient(45deg, rgba(0, 255, 136, 0.5), rgba(0, 212, 255, 0.5));
-            background-size: 200% 200%;
-            border-radius: inherit;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s;
-            animation: gradient-rotate 3s ease infinite;
-            filter: blur(2px);
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #1d1d1f;
+            transition: width 0.3s ease;
         }
-        
-        .neon-border:hover::before {
-            opacity: 0.6;
+        .nav-link:hover::after {
+            width: 100%;
         }
-        
-        @keyframes gradient-rotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes fade-in {
-            from { opacity: 0; transform: translate(-50%, -10px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-        
-        .animate-fade-in {
-            animation: fade-in 0.3s ease-out;
-        }
-        
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-        }
-        
-        .modal-content {
-            animation: modal-in 0.3s ease-out;
-            overflow-x: hidden;
-        }
-        
-        .modal-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .modal-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .modal-content::-webkit-scrollbar-thumb {
-            background: rgba(128, 128, 128, 0.6);
-            border-radius: 3px;
-        }
-        
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(128, 128, 128, 0.8);
-        }
-        
-        @keyframes modal-in {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        .tag-new, .tag-hot, .tag-tech {
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            color: #fff;
-            font-weight: 700;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #0a0a0f;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #00ff88, #00d4ff);
-            border-radius: 4px;
-        }
-        
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -174,197 +89,138 @@
         }
     </style>
 </head>
-<body class="font-sans min-h-screen cyber-grid">
-    <!-- 顶部导航 -->
-    <nav class="nav-immersive fixed top-0 left-0 right-0 z-50">
-        <div class="relative max-w-7xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="index.html" class="group flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-green/20 to-neon-blue/20 border border-neon-green/30 flex items-center justify-center group-hover:border-neon-green/60 transition-colors">
-                        <span class="text-neon-green font-mono font-bold text-lg">E</span>
+<body class="bg-apple-gray text-apple-dark font-sans">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-apple-dark rounded-xl flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-lg"></i>
                     </div>
-                    <div class="hidden sm:block">
-                        <div class="text-white font-mono font-bold tracking-wide">EXCALIBUR</div>
-                        <div class="text-[10px] font-mono text-neon-green/70">0818.DEV</div>
-                    </div>
+                    <span class="font-semibold text-lg tracking-tight">PlayAI</span>
                 </a>
-                
-                <div class="hidden md:flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-black/30">
-                    <div class="flex gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.2s;"></span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" style="animation-delay: 0.4s;"></span>
-                    </div>
-                    <span class="text-xs font-mono text-gray-400">AI_NEWS_AGGREGATOR</span>
-                    <span class="text-xs font-mono text-gray-600">|</span>
-                    <span class="text-xs font-mono text-neon-green" id="current-date">--/--</span>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <a href="index.html" class="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-green/50 transition-all text-sm font-mono flex items-center gap-2">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        返回
-                    </a>
-                    <a href="https://github.com" target="_blank" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all">
-                        <i data-lucide="github" class="w-5 h-5"></i>
-                    </a>
-                </div>
             </div>
+            <div class="hidden md:flex items-center gap-3">
+                <span class="text-sm text-gray-500">AI 早报</span>
+                <a href="index.html" class="nav-link text-sm text-gray-600 hover:text-apple-dark">
+                    <i class="fas fa-arrow-left mr-1"></i> 返回
+                </a>
+            </div>
+            <a href="index.html" class="md:hidden text-xl text-gray-600">
+                <i class="fas fa-arrow-left"></i>
+            </a>
         </div>
-        <div class="nav-border h-px"></div>
     </nav>
 
     <!-- 主内容 -->
-    <div class="pt-28 pb-16 px-4 min-h-screen">
-        <div class="max-w-7xl mx-auto">
+    <div class="pt-24 pb-16 px-4 min-h-screen hero-gradient">
+        <div class="max-w-6xl mx-auto">
             <!-- 头部 -->
-            <header class="text-center mb-10">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    <span class="text-white">AI</span>
-                    <span class="text-neon-blue">早报</span>
+            <header class="text-center mb-10 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-gray-600">每日 AI 资讯</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-semibold mb-4">
+                    AI 早报
                 </h1>
-                <p class="text-gray-400 font-mono">每日 AI 领域最新动态 // AI_NEWS_DAILY</p>
+                <p class="text-gray-500">每日 AI 领域最新动态、技术突破、产品发布，一站式获取前沿资讯。</p>
             </header>
 
-            <!-- 筛选 -->
-            <div class="flex flex-wrap justify-center gap-3 mb-6">
-                <button class="filter-btn active px-4 py-2 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm font-mono transition-all hover:bg-neon-green/20" data-filter="all">全部</button>
-                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-blue/30 hover:text-neon-blue" data-filter="tech">技术突破</button>
-                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-purple/30 hover:text-neon-purple" data-filter="product">产品发布</button>
-                <button class="filter-btn px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all hover:border-neon-pink/30 hover:text-neon-pink" data-filter="industry">行业动态</button>
-            </div>
-
             <!-- RSS源选择 -->
-            <div class="mb-8 p-4 rounded-xl bg-white/5 border border-white/10">
-                <div class="flex items-center gap-2 mb-3">
-                    <i data-lucide="rss" class="w-4 h-4 text-neon-green"></i>
-                    <span class="text-sm font-mono text-gray-300">选择资讯源</span>
-                </div>
-                <div class="flex flex-wrap justify-center gap-4" id="source-selector">
-                    <div class="flex items-center gap-2 source-item">
-                        <label class="source-checkbox cursor-pointer group">
-                            <input type="checkbox" value="jiqizhixin" checked class="hidden peer" data-url="https://www.jiqizhixin.com/rss">
-                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-blue/10 peer-checked:border-neon-blue/50 peer-checked:text-neon-blue group-hover:border-white/30 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-blue"></span>
-                                机器之心
-                            </span>
-                        </label>
-                        <button onclick="copyRSSUrl('jiqizhixin')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-blue hover:border-neon-blue/50 transition-all" title="复制RSS地址">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
+            <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-rss text-gray-400"></i>
+                        <span class="font-medium">选择资讯源</span>
                     </div>
-                    <div class="flex items-center gap-2 source-item">
-                        <label class="source-checkbox cursor-pointer group">
-                            <input type="checkbox" value="openai" checked class="hidden peer" data-url="https://openai.com/blog/rss.xml">
-                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-purple/10 peer-checked:border-neon-purple/50 peer-checked:text-neon-purple group-hover:border-white/30 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-purple"></span>
-                                OpenAI
-                            </span>
-                        </label>
-                        <button onclick="copyRSSUrl('openai')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-purple hover:border-neon-purple/50 transition-all" title="复制RSS地址">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-2 source-item">
-                        <label class="source-checkbox cursor-pointer group">
-                            <input type="checkbox" value="googleai" checked class="hidden peer" data-url="https://blog.google/technology/ai/rss/">
-                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-pink/10 peer-checked:border-neon-pink/50 peer-checked:text-neon-pink group-hover:border-white/30 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-pink"></span>
-                                Google AI
-                            </span>
-                        </label>
-                        <button onclick="copyRSSUrl('googleai')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-pink hover:border-neon-pink/50 transition-all" title="复制RSS地址">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-2 source-item">
-                        <label class="source-checkbox cursor-pointer group">
-                            <input type="checkbox" value="infoq" checked class="hidden peer" data-url="https://www.infoq.cn/feed">
-                            <span class="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-sm font-mono transition-all peer-checked:bg-neon-green/10 peer-checked:border-neon-green/50 peer-checked:text-neon-green group-hover:border-white/30 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-gray-500 peer-checked:bg-neon-green"></span>
-                                InfoQ
-                            </span>
-                        </label>
-                        <button onclick="copyRSSUrl('infoq')" class="copy-btn w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-green hover:border-neon-green/50 transition-all" title="复制RSS地址">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-
-                </div>
-                <div class="flex justify-center mt-4">
-                    <button id="refresh-btn" onclick="fetchAllNews()" class="px-6 py-2 rounded-lg bg-neon-green/10 border border-neon-green/30 text-neon-green hover:bg-neon-green/20 transition-all text-sm font-mono flex items-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4" id="refresh-icon"></i>
-                        <span>刷新资讯</span>
+                    <button id="refresh-btn" onclick="fetchAllNews()" class="btn-apple px-4 py-2 bg-apple-dark text-white rounded-lg text-sm hover:bg-gray-800">
+                        <i class="fas fa-sync mr-2" id="refresh-icon"></i>刷新
                     </button>
+                </div>
+                <div class="flex flex-wrap gap-3" id="source-selector">
+                    <label class="source-checkbox cursor-pointer">
+                        <input type="checkbox" value="jiqizhixin" checked class="hidden peer">
+                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                            机器之心
+                        </span>
+                    </label>
+                    <label class="source-checkbox cursor-pointer">
+                        <input type="checkbox" value="openai" checked class="hidden peer">
+                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                            OpenAI
+                        </span>
+                    </label>
+                    <label class="source-checkbox cursor-pointer">
+                        <input type="checkbox" value="googleai" checked class="hidden peer">
+                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                            Google AI
+                        </span>
+                    </label>
+                    <label class="source-checkbox cursor-pointer">
+                        <input type="checkbox" value="infoq" checked class="hidden peer">
+                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                            InfoQ
+                        </span>
+                    </label>
                 </div>
             </div>
 
             <!-- 加载状态 -->
             <div id="loading-status" class="hidden mb-8">
-                <div class="flex flex-col items-center gap-3">
+                <div class="flex flex-col items-center gap-3 py-8">
                     <div class="flex gap-2">
-                        <span class="w-3 h-3 rounded-full bg-neon-green animate-bounce"></span>
-                        <span class="w-3 h-3 rounded-full bg-neon-blue animate-bounce" style="animation-delay: 0.1s;"></span>
-                        <span class="w-3 h-3 rounded-full bg-neon-purple animate-bounce" style="animation-delay: 0.2s;"></span>
+                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce"></span>
+                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce" style="animation-delay: 0.1s;"></span>
+                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce" style="animation-delay: 0.2s;"></span>
                     </div>
-                    <span class="text-sm font-mono text-gray-400">正在获取最新资讯...</span>
+                    <span class="text-sm text-gray-500">正在获取最新资讯...</span>
                 </div>
             </div>
 
             <!-- 刷新结果提示 -->
-            <div id="refresh-toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 glass-card rounded-xl px-6 py-4 border border-neon-green/30 shadow-lg shadow-neon-green/10 animate-fade-in">
+            <div id="refresh-toast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl px-6 py-4 border border-gray-200 shadow-lg animate-fade-in">
                 <div class="flex items-center gap-3">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-neon-green"></i>
-                    <div id="toast-content" class="text-sm font-mono"></div>
-                    <button onclick="hideToast()" class="ml-2 text-gray-400 hover:text-white transition-colors">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                    <i id="toast-icon" class="fas fa-check-circle w-5 h-5 text-green-500"></i>
+                    <div id="toast-content" class="text-sm"></div>
+                    <button onclick="hideToast()" class="ml-2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
 
             <!-- 资讯网格 -->
-            <div id="news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+            <div id="news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </div>
 
-    <!-- 页脚 -->
-    <footer class="py-6 px-4 border-t border-white/5">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span class="font-mono text-neon-green">&lt;/&gt;</span>
-                <span>Built with</span>
-                <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500 animate-pulse"></i>
-                <span>and</span>
-                <i data-lucide="coffee" class="w-4 h-4 text-yellow-500"></i>
-            </div>
-            <div class="text-xs text-gray-600 font-mono">2026 Excalibur0818 | AI_NEWS_V1</div>
-        </div>
-    </footer>
-
     <!-- 模态框 -->
     <div id="news-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div class="absolute inset-0 bg-black/50" onclick="closeModal()"></div>
         <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content glass-card rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto overflow-x-hidden neon-border relative">
-                <button onclick="closeModal()" class="sticky top-4 float-right mr-4 w-10 h-10 rounded-full bg-black/80 border border-white/30 flex items-center justify-center text-white hover:text-neon-green hover:border-neon-green shadow-lg shadow-black/50 transition-all z-50">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+            <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                <button onclick="closeModal()" class="sticky top-4 float-right mr-4 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all z-50">
+                    <i class="fas fa-times"></i>
                 </button>
                 <div id="modal-body" class="clear-both"></div>
             </div>
         </div>
     </div>
 
+    <!-- 页脚 -->
+    <footer class="bg-apple-dark text-white py-8">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+                <i class="fas fa-heart text-red-500"></i>
+                <span>Made with AI</span>
+            </div>
+            <div class="text-sm text-gray-500">&copy; 2026 PlayAI. All rights reserved.</div>
+        </div>
+    </footer>
+
     <script>
-        lucide.createIcons();
-
-        const now = new Date();
-        document.getElementById('current-date').textContent = 
-            String(now.getMonth() + 1).padStart(2, '0') + '/' + String(now.getDate()).padStart(2, '0');
-
         // RSS 代理配置
-        // 使用自建 Cloudflare Worker 代理（无缓存，无限制）
-        //const RSS_PROXY = 'https://rss-proxy.564695155.workers.dev/?url=';
-        // 使用 Vercel Serverless Function（无缓存，无限制）
         const RSS_PROXY = 'https://play-ai-boki.vercel.app/api/rss-proxy?url=';
 
         // RSS源配置
@@ -372,38 +228,28 @@
             jiqizhixin: {
                 name: '机器之心',
                 url: 'https://www.jiqizhixin.com/rss',
-                category: 'tech',
-                color: 'neon-blue'
+                category: 'tech'
             },
             openai: {
                 name: 'OpenAI',
                 url: 'https://openai.com/blog/rss.xml',
-                category: 'tech',
-                color: 'neon-purple'
+                category: 'tech'
             },
             googleai: {
                 name: 'Google AI',
                 url: 'https://blog.google/technology/ai/rss/',
-                category: 'tech',
-                color: 'neon-pink'
+                category: 'tech'
             },
             infoq: {
                 name: 'InfoQ',
                 url: 'https://www.infoq.cn/feed',
-                category: 'tech',
-                color: 'neon-green'
+                category: 'tech'
             }
         };
 
         let newsData = [];
-        let currentFilter = 'all';
 
-        // 提取图片URL（仅从 thumbnail 获取）
-        function extractImage(item) {
-            return item.thumbnail || null;
-        }
-
-        // 获取默认图片//https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80
+        // 获取默认图片
         function getDefaultImage(source) {
             const defaults = {
                 '机器之心': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80',
@@ -417,7 +263,6 @@
         // 获取文本摘要
         function extractSummary(content, maxLength = 80) {
             if (!content) return '暂无摘要';
-            // 去除HTML标签
             const text = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
             if (text.length <= maxLength) return text;
             return text.substring(0, maxLength) + '...';
@@ -445,55 +290,41 @@
             return Array.from(checkboxes).map(cb => cb.value);
         }
 
-        /**
-         * 获取单个RSS源数据
-         * @param {string} sourceKey - RSS源标识
-         * @returns {Object} - { success: boolean, items: Array, error: string, name: string }
-         */
+        // 获取单个RSS源数据
         async function fetchRSS(sourceKey) {
             const source = RSS_SOURCES[sourceKey];
             const apiUrl = `${RSS_PROXY}${encodeURIComponent(source.url)}&count=10`;
-            
+
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: 网络请求失败`);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
-                
-                if (data.status !== 'ok') {
-                    throw new Error(data.message || 'RSS解析失败');
-                }
 
-                const items = data.items.map((item, index) => {
-                    const imgUrl = extractImage(item) || getDefaultImage(source.name);
-                    
-                    return {
-                        id: `${sourceKey}-${index}`,
-                        title: item.title,
-                        summary: extractSummary(item.description || item.content),
-                        content: item.content || item.description || '暂无内容',
-                        category: source.category,
-                        tag: index < 3 ? 'HOT' : 'NEW',
-                        tagClass: index < 3 ? 'tag-hot text-neon-pink' : 'tag-new text-neon-green',
-                        time: getRelativeTime(item.pubDate),
-                        image: imgUrl,
-                        source: source.name,
-                        link: item.link,
-                        pubDate: item.pubDate
-                    };
-                });
-                
-                return { success: true, items: items, error: null, name: source.name };
+                if (data.status !== 'ok') throw new Error(data.message || '解析失败');
+
+                const items = data.items.map((item, index) => ({
+                    id: `${sourceKey}-${index}`,
+                    title: item.title,
+                    summary: extractSummary(item.description || item.content),
+                    content: item.content || item.description || '暂无内容',
+                    category: source.category,
+                    tag: index < 3 ? '热门' : '最新',
+                    tagClass: index < 3 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600',
+                    time: getRelativeTime(item.pubDate),
+                    image: item.thumbnail || getDefaultImage(source.name),
+                    source: source.name,
+                    link: item.link,
+                    pubDate: item.pubDate
+                }));
+
+                return { success: true, items, name: source.name };
             } catch (error) {
                 console.error(`获取 ${source.name} 失败:`, error);
                 return { success: false, items: [], error: error.message, name: source.name };
             }
         }
 
-        /**
-         * 获取所有新闻并显示详细状态
-         */
+        // 获取所有新闻
         async function fetchAllNews() {
             const loadingEl = document.getElementById('loading-status');
             const refreshIcon = document.getElementById('refresh-icon');
@@ -501,7 +332,7 @@
 
             if (selectedSources.length === 0) {
                 newsData = [];
-                renderNews(currentFilter);
+                renderNews();
                 showToast('请至少选择一个资讯源', 'warning');
                 return;
             }
@@ -511,245 +342,156 @@
             document.getElementById('news-grid').innerHTML = '';
 
             try {
-                const results = await Promise.all(
-                    selectedSources.map(key => fetchRSS(key))
-                );
-                
-                const successList = [];
-                const failedList = [];
+                const results = await Promise.all(selectedSources.map(key => fetchRSS(key)));
+
                 let allItems = [];
-                
+                let successCount = 0;
+                let failedCount = 0;
+
                 results.forEach(result => {
                     if (result.success) {
-                        successList.push({ name: result.name, count: result.items.length });
+                        successCount++;
                         allItems = allItems.concat(result.items);
                     } else {
-                        failedList.push({ name: result.name, error: result.error });
+                        failedCount++;
                     }
                 });
-                
+
                 newsData = allItems
                     .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
-                    .slice(0, 40);
+                    .slice(0, 30);
 
-                renderNews(currentFilter);
-                
+                renderNews();
+
                 const totalCount = newsData.length;
-                const successDetails = successList.map(r => 
-                    `<span class="text-neon-green">${r.name}</span>: ${r.count}条`
-                );
-                const failedDetails = failedList.map(r => 
-                    `<span class="text-neon-pink">${r.name}</span>: ${r.error}`
-                );
-                
-                const allDetails = [...successDetails, ...failedDetails].join(' | ');
-                
-                if (failedList.length === 0) {
-                    showToast(`共获取 <span class="text-neon-green font-bold">${totalCount}</span> 条资讯<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'success');
-                } else if (successList.length === 0) {
-                    showToast(`所有资讯源获取失败<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'error');
+                if (failedCount === 0) {
+                    showToast(`共获取 ${totalCount} 条资讯`, 'success');
                 } else {
-                    showToast(`共获取 <span class="text-neon-green font-bold">${totalCount}</span> 条资讯，<span class="text-neon-pink">${failedList.length}</span> 个源失败<br><span class="text-gray-400 text-xs">${allDetails}</span>`, 'warning');
+                    showToast(`获取 ${totalCount} 条资讯，${failedCount} 个源失败`, 'warning');
                 }
             } catch (error) {
                 console.error('获取新闻失败:', error);
                 document.getElementById('news-grid').innerHTML = `
                     <div class="col-span-full text-center py-12">
-                        <div class="text-gray-400 font-mono mb-2">获取新闻失败</div>
-                        <div class="text-sm text-gray-600">${error.message || '请稍后重试'}</div>
+                        <div class="text-gray-500 mb-2">获取新闻失败</div>
+                        <div class="text-sm text-gray-400">${error.message || '请稍后重试'}</div>
                     </div>
                 `;
                 showToast(`获取资讯失败: ${error.message || '未知错误'}`, 'error');
             } finally {
                 loadingEl.classList.add('hidden');
                 refreshIcon.classList.remove('animate-spin');
-                lucide.createIcons();
             }
         }
 
-        /**
-         * 显示刷新结果提示
-         * @param {string} message - 提示内容（支持HTML）
-         * @param {string} type - 类型: success/warning/error
-         */
+        // 显示提示
         function showToast(message, type = 'success') {
             const toast = document.getElementById('refresh-toast');
             const content = document.getElementById('toast-content');
-            const icon = toast.querySelector('i[data-lucide]');
-            
-            if (!toast || !content) {
-                console.error('Toast elements not found');
-                return;
+            const icon = document.getElementById('toast-icon');
+
+            if (!toast || !content) return;
+
+            content.textContent = message;
+
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle w-5 h-5 text-green-500';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-circle w-5 h-5 text-yellow-500';
+            } else {
+                icon.className = 'fas fa-times-circle w-5 h-5 text-red-500';
             }
-            
-            content.innerHTML = message;
-            
-            if (icon) {
-                if (type === 'success') {
-                    icon.setAttribute('data-lucide', 'check-circle');
-                    icon.className = 'w-5 h-5 text-neon-green';
-                    toast.classList.remove('border-neon-pink/30', 'border-yellow-500/30');
-                    toast.classList.add('border-neon-green/30');
-                } else if (type === 'warning') {
-                    icon.setAttribute('data-lucide', 'alert-circle');
-                    icon.className = 'w-5 h-5 text-yellow-500';
-                    toast.classList.remove('border-neon-green/30', 'border-neon-pink/30');
-                    toast.classList.add('border-yellow-500/30');
-                } else if (type === 'error') {
-                    icon.setAttribute('data-lucide', 'x-circle');
-                    icon.className = 'w-5 h-5 text-neon-pink';
-                    toast.classList.remove('border-neon-green/30', 'border-yellow-500/30');
-                    toast.classList.add('border-neon-pink/30');
-                }
-            }
-            
+
             toast.classList.remove('hidden');
-            lucide.createIcons();
-            
             setTimeout(() => hideToast(), 5000);
         }
 
-        /**
-         * 隐藏提示
-         */
+        // 隐藏提示
         function hideToast() {
-            const toast = document.getElementById('refresh-toast');
-            toast.classList.add('hidden');
+            document.getElementById('refresh-toast').classList.add('hidden');
         }
 
-        function renderNews(filter) {
+        // 渲染新闻
+        function renderNews() {
             const grid = document.getElementById('news-grid');
-            const filtered = filter === 'all' ? newsData : newsData.filter(function(n) { return n.category === filter; });
-            
-            grid.innerHTML = filtered.map(function(news) {
-                return '<div class="glass-card rounded-xl overflow-hidden neon-border cursor-pointer group" onclick="openModal(\'' + news.id + '\')">' +
-                    '<div class="relative h-40 overflow-hidden">' +
-                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.src=\'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80\'" referrerpolicy="no-referrer">' +
-                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>' +
-                        '<div class="absolute top-3 left-3">' +
-                            '<span class="' + news.tagClass + ' px-2 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
-                        '</div>' +
-                        '<div class="absolute bottom-3 left-3 right-3">' +
-                            '<span class="text-xs text-gray-400 font-mono">' + news.time + ' · ' + news.source + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="p-4">' +
-                        '<h3 class="text-white font-bold mb-2 line-clamp-2 group-hover:text-neon-blue transition-colors">' + news.title + '</h3>' +
-                        '<p class="text-gray-400 text-sm line-clamp-2">' + news.summary + '</p>' +
-                    '</div>' +
-                '</div>';
-            }).join('');
-            
-            lucide.createIcons();
+
+            if (newsData.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <div class="text-gray-400 mb-2">暂无资讯</div>
+                        <button onclick="fetchAllNews()" class="text-apple-blue hover:underline">点击刷新</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = newsData.map(news => `
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer" onclick="openModal('${news.id}')">
+                    <div class="relative h-44 overflow-hidden">
+                        <img src="${news.image}" alt="${news.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'" referrerpolicy="no-referrer">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute top-3 left-3">
+                            <span class="${news.tagClass} px-2 py-1 rounded text-xs font-medium">${news.tag}</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-2 line-clamp-2 group-hover:text-apple-blue transition-colors">${news.title}</h3>
+                        <p class="text-sm text-gray-500 line-clamp-2">${news.summary}</p>
+                        <div class="mt-3 text-xs text-gray-400">${news.time} · ${news.source}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
+        // 打开详情
         function openModal(id) {
-            const news = newsData.find(function(n) { return n.id == id; });
+            const news = newsData.find(n => n.id == id);
             if (!news) return;
-            
-            const modal = document.getElementById('news-modal');
+
             const body = document.getElementById('modal-body');
-            
-            body.innerHTML = 
-                '<div class="relative bg-cyber-black">' +
-                    '<div class="h-64 overflow-hidden relative">' +
-                        '<img src="' + news.image + '" alt="' + news.title + '" class="w-full h-full object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80\'" referrerpolicy="no-referrer">' +
-                        '<div class="absolute inset-0 bg-gradient-to-t from-cyber-black via-transparent to-transparent"></div>' +
-                    '</div>' +
-                    '<div class="p-6 relative bg-cyber-black">' +
-                        '<div class="flex items-center gap-3 mb-4">' +
-                            '<span class="' + news.tagClass + ' px-3 py-1 rounded text-xs font-mono font-bold">' + news.tag + '</span>' +
-                            '<span class="text-gray-300 text-sm font-mono">' + news.time + '</span>' +
-                            '<span class="text-gray-600">·</span>' +
-                            '<span class="text-neon-blue text-sm font-mono">' + news.source + '</span>' +
-                        '</div>' +
-                        '<h2 class="text-2xl font-bold text-white mb-4">' + news.title + '</h2>' +
-                        '<div class="text-white leading-relaxed text-base">' + news.content + '</div>' +
-                        '<div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">' +
-                            '<a href="' + news.link + '" target="_blank" class="px-4 py-2 rounded-lg bg-neon-blue/20 border border-neon-blue/50 text-neon-blue hover:bg-neon-blue/30 hover:text-white transition-all text-sm font-mono flex items-center gap-2">' +
-                                '<i data-lucide="external-link" class="w-4 h-4"></i>查看原文' +
-                            '</a>' +
-                            '<button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-gray-300 hover:text-white hover:border-white/40 transition-all text-sm font-mono">CLOSE</button>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-            
-            modal.classList.remove('hidden');
+            body.innerHTML = `
+                <div class="relative">
+                    <div class="h-56 overflow-hidden">
+                        <img src="${news.image}" alt="${news.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'" referrerpolicy="no-referrer">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="${news.tagClass} px-2 py-1 rounded text-xs font-medium">${news.tag}</span>
+                            <span class="text-sm text-gray-500">${news.time}</span>
+                            <span class="text-gray-300">·</span>
+                            <span class="text-sm text-apple-blue">${news.source}</span>
+                        </div>
+                        <h2 class="text-xl font-semibold mb-4">${news.title}</h2>
+                        <div class="text-gray-600 leading-relaxed mb-6">${news.content}</div>
+                        <div class="flex gap-3">
+                            <a href="${news.link}" target="_blank" class="px-4 py-2 bg-apple-dark text-white rounded-lg text-sm hover:bg-gray-800 transition-all">
+                                <i class="fas fa-external-link-alt mr-2"></i>查看原文
+                            </a>
+                            <button onclick="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm hover:bg-gray-200 transition-all">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('news-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            lucide.createIcons();
         }
 
+        // 关闭详情
         function closeModal() {
-            const modal = document.getElementById('news-modal');
-            modal.classList.add('hidden');
+            document.getElementById('news-modal').classList.add('hidden');
             document.body.style.overflow = '';
         }
 
-        // 复制RSS地址
-        async function copyRSSUrl(sourceKey) {
-            const url = RSS_SOURCES[sourceKey].url;
-            const btn = document.querySelector(`button[onclick="copyRSSUrl('${sourceKey}')"]`);
-            const icon = btn.querySelector('i');
-            
-            try {
-                await navigator.clipboard.writeText(url);
-                // 切换为成功图标
-                icon.setAttribute('data-lucide', 'check');
-                btn.classList.add('text-neon-green', 'border-neon-green/50');
-                btn.classList.remove('text-gray-400');
-                lucide.createIcons();
-                
-                // 2秒后恢复
-                setTimeout(() => {
-                    icon.setAttribute('data-lucide', 'copy');
-                    btn.classList.remove('text-neon-green', 'border-neon-green/50');
-                    btn.classList.add('text-gray-400');
-                    lucide.createIcons();
-                }, 2000);
-            } catch (err) {
-                // 降级方案
-                const textarea = document.createElement('textarea');
-                textarea.value = url;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                
-                icon.setAttribute('data-lucide', 'check');
-                btn.classList.add('text-neon-green');
-                lucide.createIcons();
-                setTimeout(() => {
-                    icon.setAttribute('data-lucide', 'copy');
-                    btn.classList.remove('text-neon-green');
-                    lucide.createIcons();
-                }, 2000);
-            }
-        }
-
-        // 筛选按钮事件
-        document.querySelectorAll('.filter-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(function(b) {
-                    b.classList.remove('active', 'bg-neon-green/10', 'border-neon-green/30', 'text-neon-green');
-                    b.classList.add('bg-white/5', 'border-white/10', 'text-gray-400');
-                });
-                this.classList.remove('bg-white/5', 'border-white/10', 'text-gray-400');
-                this.classList.add('active', 'bg-neon-green/10', 'border-neon-green/30', 'text-neon-green');
-                currentFilter = this.dataset.filter;
-                renderNews(currentFilter);
-            });
+        // RSS源选择事件
+        document.querySelectorAll('#source-selector input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', fetchAllNews);
         });
 
-        // RSS源选择器事件
-        document.querySelectorAll('#source-selector input[type="checkbox"]').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                fetchAllNews();
-            });
-        });
-
-        document.addEventListener('keydown', function(e) {
+        // ESC关闭模态框
+        document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeModal();
         });
 

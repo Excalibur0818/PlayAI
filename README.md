@@ -1,26 +1,26 @@
-# PlayAI - AI 工具箱
+# PlayAI
 
-🌐 在线预览：[https://excalibur0818.github.io/PlayAI](https://excalibur0818.github.io/PlayAI)
+在线预览：[https://excalibur0818.github.io/PlayAI](https://excalibur0818.github.io/PlayAI)
 
-一个聚合多种 AI 工具的个人工具箱，采用赛博胡克风格设计。
+一个聚合多种 AI 工具的个人工具箱，采用简洁的 Apple 黑白商务风格设计。
 
 ![PlayAI](https://img.shields.io/badge/PlayAI-Tools-blue)
 ![Pure Frontend](https://img.shields.io/badge/Pure-Frontend-orange)
-![Cyberpunk](https://img.shields.io/badge/Style-Cyberpunk-purple)
+![Apple Style](https://img.shields.io/badge/Style-Apple-gray)
 
 ---
 
-## 🎨 工具列表
+## 工具列表
 
 ### 1. AI 早报 📰
 **AI 资讯聚合页面**
 
 - 多 RSS 源动态获取（机器之心、OpenAI、Google AI 等）
-- 支持源筛选和分类过滤
+- 支持源筛选
 - RSS 地址一键复制
 - 响应式卡片布局
 
-→ 访问：`ai-news.html`
+访问：`ai-news.html`
 
 ---
 
@@ -28,15 +28,15 @@
 **推理游戏题目生成工具**
 
 - 智能生成海龟汤推理题目
-- 支持自定义题目难度和类型
+- 支持自定义题目难度和类型（清汤/红汤/黑汤）
 - 答案逐层揭示功能
 - 适合聚会、团建活动
 
-→ 访问：`turtle-soup.html`
+访问：`turtle-soup.html`
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 ### 本地预览
 
@@ -62,32 +62,31 @@ python -m http.server 8080
 
 ---
 
-## 📜 技术栈
+## 技术栈
 
 - **前端**: 原生 HTML5 + Tailwind CSS
-- **图标**: Lucide Icons
-- **样式**: 赛博胡克风格（红色/绿色/蓝色渐变）
+- **图标**: Font Awesome
+- **样式**: Apple 黑白商务风格
+- **字体**: Inter
 - **托管**: GitHub Pages
 
 ---
 
-## 📁 项目结构
+## 项目结构
 
 ```
 PlayAI/
-├── index.html              # 工具箱首页/导航
+├── index.html              # 工具箱首页
 ├── ai-news.html            # AI 资讯聚合
 ├── turtle-soup.html        # 海龟汤生成器
-├── errorpage.html          # 错误页面
 ├── main.js                 # 公共逻辑
 ├── README.md               # 本文档
-├── RSSHub-Deploy-Guide.md  # RSSHub 部署指南
 └── LICENSE                 # MIT 协议
 ```
 
 ---
 
-## 🔧 配置说明
+## 配置说明
 
 ### AI 早报 RSS 源配置
 
@@ -98,40 +97,34 @@ const RSS_SOURCES = {
     jiqizhixin: {
         name: '机器之心',
         url: 'https://www.jiqizhixin.com/rss',
-        category: 'tech',
-        color: 'neon-blue'
+        category: 'tech'
     },
     openai: {
         name: 'OpenAI',
         url: 'https://openai.com/blog/rss.xml',
-        category: 'tech',
-        color: 'neon-purple'
+        category: 'tech'
     }
     // 添加更多源...
 };
 ```
 
-### 扩展更多 RSS 源
-
-如需获取知乎、微博等没有官方 RSS 的平台，可参阅 [RSSHub 部署指南](./RSSHub-Deploy-Guide.md)自建 RSSHub 实例。
-
 ---
 
-## ⚠️ 注意事项
+## 注意事项
 
 1. **纯前端项目** - 所有功能均在浏览器端运行，无需后端服务
-2. **RSS2JSON 限制** - 免费版 API 有调用次数限制（约 200 次/天）
+2. **RSS 代理** - 使用 Vercel Serverless Function 代理，无调用限制
 3. **图片加载** - 部分网站图片有防盗链限制，可能显示默认图
 
 ---
 
-## 📜 开源协议
+## 开源协议
 
 [MIT License](./LICENSE)
 
 ---
 
-## 👋 联系
+## 联系
 
 - GitHub: [@Excalibur0818](https://github.com/Excalibur0818)
 - 邮箱: excalibur0818@gmail.com
