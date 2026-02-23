@@ -4,9 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>知识库 | PlayAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        'apple-gray': '#f5f5f7',
+                        'apple-dark': '#1d1d1f',
+                        'apple-light': '#fbfbfd',
+                        'apple-blue': '#0071e3',
+                        'apple-blue-hover': '#0077ed',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
             --theme-color: #0071e3;
@@ -35,6 +55,7 @@
         .sidebar {
             background: #f5f5f7;
             font-weight: 500;
+            top: 64px !important;
         }
 
         .sidebar-nav > a {
@@ -52,40 +73,12 @@
         }
 
         .sidebar-toggle {
-            background: #1d1d1f;
-            border-radius: 8px;
-        }
-
-        /* 导航栏 */
-        .navbar {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .navbar a {
-            color: #1d1d1f;
-            font-weight: 500;
-        }
-
-        .navbar a:hover {
-            color: #0071e3;
-        }
-
-        /* 隐藏 docsify 自动添加的 home 图标 */
-        .navbar .active::before,
-        .navbar > a:first-child::before {
-            display: none;
-        }
-
-        .navbar > a::before {
             display: none !important;
         }
 
-        /* 导航栏链接在同一窗口打开 */
-        .navbar a {
-            target: _self !important;
+        /* 隐藏 docsify 默认导航栏 */
+        .navbar {
+            display: none !important;
         }
 
         /* 搜索框 */
@@ -159,13 +152,6 @@
             border-color: #e5e5e5;
         }
 
-        /* 按钮 */
-        .button-nav {
-            background: #f5f5f7;
-            color: #1d1d1f;
-            border-radius: 8px;
-        }
-
         /* 分页 */
         .pagination-item a {
             background: #f5f5f7;
@@ -181,6 +167,12 @@
         /* 加载动画 */
         #app {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* 主内容区域 */
+        main {
+            margin-top: 64px !important;
+            padding-top: 20px !important;
         }
 
         /* 滚动条 */
@@ -208,23 +200,20 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
                 position: fixed;
-                top: 0;
+                top: 64px !important;
                 left: 0;
                 bottom: 0;
                 z-index: 100;
-                padding-top: 60px;
+                padding-top: 20px;
             }
 
             .sidebar.open {
                 transform: translateX(0);
             }
 
-            .navbar {
-                padding: 10px 16px;
-            }
-
-            .navbar > a {
-                font-size: 14px;
+            /* 隐藏默认的 sidebar-toggle，使用自定义导航栏的按钮 */
+            .sidebar-toggle {
+                display: none !important;
             }
 
             main {
@@ -261,7 +250,7 @@
         .sidebar-mask {
             display: none;
             position: fixed;
-            top: 0;
+            top: 64px;
             left: 0;
             right: 0;
             bottom: 0;
@@ -274,23 +263,69 @@
                 display: block;
             }
         }
+
+        /* 导航栏样式 */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #1d1d1f;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
     </style>
 </head>
 <body>
+    <!-- 自定义导航栏（与主页一致） -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-apple-dark rounded-xl flex items-center justify-center">
+                    <i class="fas fa-robot text-white text-lg"></i>
+                </div>
+                <span class="font-semibold text-lg tracking-tight">PlayAI</span>
+            </div>
+            <div class="hidden md:flex gap-8">
+                <a href="https://www.bokigame.top/" class="nav-link text-sm text-gray-600 hover:text-apple-dark">首页</a>
+                <a href="https://www.bokigame.top/#tools" class="nav-link text-sm text-gray-600 hover:text-apple-dark">工具</a>
+                <a href="https://www.bokigame.top/docs/" class="nav-link text-sm text-gray-600 hover:text-apple-dark">知识库</a>
+            </div>
+            <button class="md:hidden text-xl" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="sidebar-mask" onclick="document.querySelector('.sidebar').classList.remove('open')"></div>
+
     <div id="app">加载中...</div>
+
     <script>
         window.$docsify = {
             name: 'PlayAI 知识库',
             repo: '',
             loadSidebar: true,
-            loadNavbar: true,
+            loadNavbar: false,
             externalLinkRel: '',
             externalLinkTarget: '_self',
             subMaxLevel: 3,
             auto2top: true,
             alias: {
-                '/.*/_sidebar.md': '/_sidebar.md',
-                '/.*/_navbar.md': '/_navbar.md'
+                '/.*/_sidebar.md': '/_sidebar.md'
             },
             search: {
                 maxAge: 86400000,

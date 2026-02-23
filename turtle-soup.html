@@ -86,7 +86,7 @@
 <body class="bg-apple-gray text-apple-dark font-sans">
     <!-- 导航栏 -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-200/50">
-        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <a href="index.html" class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-apple-dark rounded-xl flex items-center justify-center">
@@ -95,36 +95,16 @@
                     <span class="font-semibold text-lg tracking-tight">PlayAI</span>
                 </a>
             </div>
-            <div class="hidden md:flex items-center gap-3">
-                <span class="text-sm text-gray-500">海龟汤生成器</span>
-                <a href="index.html" class="nav-link text-sm text-gray-600 hover:text-apple-dark">
-                    <i class="fas fa-arrow-left mr-1"></i> 返回
-                </a>
+            <div class="hidden md:flex gap-8">
+                <a href="index.html" class="nav-link text-sm text-gray-600 hover:text-apple-dark">首页</a>
+                <a href="index.html#tools" class="nav-link text-sm text-gray-600 hover:text-apple-dark">工具</a>
+                <a href="docs/" class="nav-link text-sm text-gray-600 hover:text-apple-dark">知识库</a>
             </div>
-            <button onclick="toggleMobileMenu()" class="md:hidden text-xl text-gray-600">
+            <button class="md:hidden text-xl">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
-
-    <!-- 移动端菜单 -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-white/95 backdrop-blur-sm hidden md:hidden">
-        <div class="pt-20 px-6">
-            <div class="flex justify-end mb-8">
-                <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <a href="index.html" class="block py-3 text-lg font-medium text-gray-700 border-b border-gray-100">
-                    <i class="fas fa-arrow-left mr-3"></i>返回首页
-                </a>
-                <div class="py-3 text-gray-500">
-                    <i class="fas fa-utensils mr-3"></i>海龟汤生成器
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- 主内容 -->
     <div class="pt-24 pb-16 px-4 min-h-screen hero-gradient">
