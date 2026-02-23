@@ -73,6 +73,16 @@
             color: #0071e3;
         }
 
+        /* 隐藏 docsify 自动添加的 home 图标 */
+        .navbar .active::before,
+        .navbar > a:first-child::before {
+            display: none;
+        }
+
+        .navbar > a::before {
+            display: none !important;
+        }
+
         /* 搜索框 */
         .search-input {
             background: #f5f5f7 !important;
