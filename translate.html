@@ -521,10 +521,10 @@
         // 翻译单行
         async function translateLine(text, from, to, appid, key) {
             const salt = Math.random().toString(36).substr(2, 10);
-            // 签名用原始文本（不需要编码）
-            const sign = md5(appid + text + salt + key);
             // 请求中的 q 需要 URL 编码
             const encodedText = encodeURIComponent(text);
+            // 签名用 URL 编码后的 q
+            const sign = md5(appid + encodedText + salt + key);
 
             // 获取用户配置的代理地址
             const proxyUrl = document.getElementById('proxy-input').value.trim();
