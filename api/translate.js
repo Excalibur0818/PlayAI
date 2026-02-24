@@ -43,7 +43,8 @@ export default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: `q=${encodeURIComponent(q)}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`
+      // 客户端已经对 q 进行了 URL 编码，直接使用
+      body: `q=${q}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`
     });
 
     const data = await response.json();
