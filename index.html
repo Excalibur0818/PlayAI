@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayAI</title>
+    <title>PlayAI - AI 智能工具箱</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'sans': ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                        'display': ['Playfair Display', 'Georgia', 'serif'],
                     },
                     colors: {
                         'apple-gray': '#f5f5f7',
@@ -20,10 +21,14 @@
                         'apple-light': '#fbfbfd',
                         'apple-blue': '#0071e3',
                         'apple-blue-hover': '#0077ed',
+                        'apple-border': '#d2d2d7',
+                        'apple-text': '#86868b',
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out',
-                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'fade-in-up': 'fadeInUp 1s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -31,8 +36,16 @@
                             '100%': { opacity: '1' },
                         },
                         fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' },
                         }
                     }
                 }
@@ -44,46 +57,94 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+
+        /* 背景纹理 */
+        .bg-texture {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 113, 227, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 113, 227, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(0, 113, 227, 0.03) 0%, transparent 50%);
         }
+
+        /* 高级毛玻璃效果 */
+        .glass-premium {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+        }
+
+        /* 渐变背景 */
         .hero-gradient {
-            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #fafafa 50%, #f5f5f7 100%);
         }
+
+        .hero-glow {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 113, 227, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0, 113, 227, 0.05) 0%, transparent 50%);
+        }
+
+        /* 卡片悬停效果 */
         .card-hover {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-12px);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.08),
+                0 20px 40px rgba(0, 0, 0, 0.04);
         }
+
+        /* 按钮效果 */
         .btn-apple {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-apple::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .btn-apple:hover::before {
+            opacity: 1;
         }
         .btn-apple:hover {
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
+
+        /* 导航链接 */
         .nav-link {
             position: relative;
+            font-weight: 500;
         }
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 0;
+            bottom: -6px;
+            left: 50%;
             width: 0;
             height: 2px;
-            background: #1d1d1f;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, transparent, #0071e3, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
         .nav-link:hover::after {
             width: 100%;
         }
+
+        /* 工具卡片 */
         .tool-card {
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
         .tool-card::before {
             content: '';
@@ -94,196 +155,358 @@
             height: 3px;
             background: linear-gradient(90deg, #1d1d1f, #86868b);
             transform: scaleX(0);
-            transition: transform 0.3s ease;
+            transform-origin: left;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .tool-card:hover::before {
             transform: scaleX(1);
         }
+
+        /* 图标容器 */
+        .icon-container {
+            position: relative;
+        }
+        .icon-container::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            background: radial-gradient(circle, currentColor 0%, transparent 70%);
+            opacity: 0.1;
+            border-radius: 50%;
+            filter: blur(12px);
+        }
+
+        /* 入场动画延迟 */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        /* 装饰线 */
+        .decorative-line {
+            background: linear-gradient(90deg, transparent, #d2d2d7, transparent);
+            height: 1px;
+        }
+
+        /* 脉冲指示器 */
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f5f7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d2d2d7;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a6;
+        }
+
+        /* 数字动画 */
+        .stat-number {
+            background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
-<body class="bg-apple-gray text-apple-dark font-sans">
+<body class="bg-apple-gray text-apple-dark font-sans bg-texture">
     <!-- 导航栏 -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-200/50">
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-premium border-b border-apple-border/30">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-apple-dark rounded-xl flex items-center justify-center">
-                    <i class="fas fa-robot text-white text-lg"></i>
+                <div class="relative">
+                    <div class="w-10 h-10 bg-gradient-to-br from-apple-dark to-gray-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-microchip text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white pulse-dot"></div>
                 </div>
-                <span class="font-semibold text-lg tracking-tight">PlayAI</span>
+                <div class="flex items-center gap-2">
+                    <span class="font-semibold text-lg tracking-tight">PlayAI</span>
+                    <span class="hidden sm:inline text-xs text-apple-text bg-gray-100 px-2 py-0.5 rounded-full">Beta</span>
+                </div>
             </div>
-            <div class="hidden md:flex gap-8">
-                <a href="#home" class="nav-link text-sm text-gray-600 hover:text-apple-dark">首页</a>
-                <a href="#tools" class="nav-link text-sm text-gray-600 hover:text-apple-dark">工具</a>
-                <a href="docs/" class="nav-link text-sm text-gray-600 hover:text-apple-dark">知识库</a>
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#home" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">首页</a>
+                <a href="#tools" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">工具</a>
+                <a href="docs/" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">知识库</a>
+                <a href="https://github.com" target="_blank" class="text-apple-text hover:text-apple-dark transition-colors">
+                    <i class="fab fa-github text-lg"></i>
+                </a>
             </div>
-            <button class="md:hidden text-xl">
+            <button class="md:hidden text-xl text-apple-dark">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
 
     <!-- 英雄区 -->
-    <section id="home" class="hero-gradient min-h-[60vh] flex items-center justify-center pt-10">
-        <div class="max-w-4xl mx-auto px-6 text-center animate-fade-in-up">
-            <div class="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-8">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-sm text-gray-600">AI 驱动 · 智能工具</span>
+    <section id="home" class="hero-gradient hero-glow min-h-[70vh] flex items-center justify-center pt-10 relative overflow-hidden">
+        <!-- 装饰元素 -->
+        <div class="absolute top-1/4 left-10 w-64 h-64 bg-apple-blue/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-10 w-80 h-80 bg-apple-blue/3 rounded-full blur-3xl"></div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <!-- 状态标签 -->
+            <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-5 py-2.5 rounded-full mb-10 shadow-sm border border-gray-100 animate-fade-in-up">
+                <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                <span class="text-sm font-medium text-apple-text">AI 驱动 · 智能工具</span>
             </div>
-            <h1 class="text-4xl md:text-6xl font-semibold mb-6 leading-tight">
-                PlayAI
+
+            <!-- 主标题 -->
+            <h1 class="text-5xl md:text-7xl font-semibold mb-8 leading-tight tracking-tight animate-fade-in-up delay-100">
+                <span class="text-apple-dark">Play</span><span class="text-transparent bg-clip-text bg-gradient-to-r from-apple-blue to-blue-600">AI</span>
             </h1>
-            <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                由 AI 制作的实用在线工具集合，为日常工作提供智能化解决方案。
+
+            <!-- 副标题 -->
+            <p class="text-lg md:text-xl text-apple-text mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200">
+                由 AI 精心打造的实用在线工具集合，为日常工作提供智能化解决方案。
             </p>
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="#tools" class="btn-apple bg-apple-dark text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-gray-800">
-                    <i class="fas fa-rocket mr-2"></i> 开始使用
+
+            <!-- 按钮组 -->
+            <div class="flex flex-wrap gap-4 justify-center mb-16 animate-fade-in-up delay-300">
+                <a href="#tools" class="btn-apple bg-apple-dark text-white px-8 py-4 rounded-full text-sm font-semibold shadow-xl shadow-apple-dark/20 hover:shadow-2xl hover:shadow-apple-dark/30">
+                    <i class="fas fa-rocket mr-2"></i> 探索工具
                 </a>
-                <a href="#about" class="btn-apple bg-white text-apple-dark px-8 py-3 rounded-full text-sm font-medium border border-gray-200 hover:border-gray-400">
+                <a href="#features" class="btn-apple bg-white text-apple-dark px-8 py-4 rounded-full text-sm font-semibold border border-gray-200 hover:border-gray-300 shadow-lg">
                     了解更多
                 </a>
             </div>
-            <!-- 统计 -->
-            <div class="grid grid-cols-3 gap-8 mt-12 max-w-lg mx-auto">
-                <div class="text-center">
-                    <p class="text-3xl font-semibold">2</p>
-                    <p class="text-sm text-gray-500">AI 工具</p>
+
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-3 gap-6 max-w-lg mx-auto animate-fade-in-up delay-400">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <p class="text-3xl md:text-4xl font-semibold stat-number">3</p>
+                    <p class="text-sm text-apple-text mt-1">AI 工具</p>
                 </div>
-                <div class="text-center">
-                    <p class="text-3xl font-semibold">100%</p>
-                    <p class="text-sm text-gray-500">免费使用</p>
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <p class="text-3xl md:text-4xl font-semibold stat-number">100%</p>
+                    <p class="text-sm text-apple-text mt-1">免费使用</p>
                 </div>
-                <div class="text-center">
-                    <p class="text-3xl font-semibold">AI</p>
-                    <p class="text-sm text-gray-500">智能驱动</p>
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <p class="text-3xl md:text-4xl font-semibold stat-number">本地</p>
+                    <p class="text-sm text-apple-text mt-1">隐私保护</p>
                 </div>
             </div>
         </div>
+
+        <!-- 底部装饰 -->
+        <div class="absolute bottom-0 left-0 right-0 h-px decorative-line"></div>
     </section>
 
     <!-- 工具展示 -->
-    <section id="tools" class="py-12 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="text-3xl font-semibold text-center mb-4">AI 工具</h2>
-            <p class="text-gray-500 text-center mb-16 max-w-2xl mx-auto">
-                由 AI 精心打造的智能工具，更多 AI 工具正在开发中，敬请期待。
-            </p>
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+    <section id="tools" class="py-20 bg-white relative">
+        <!-- 背景装饰 -->
+        <div class="absolute top-0 left-0 right-0 h-px decorative-line"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-apple-blue/3 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-apple-blue/2 rounded-full blur-3xl"></div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <!-- 标题区域 -->
+            <div class="text-center mb-16">
+                <span class="inline-block text-xs font-semibold text-apple-blue tracking-widest uppercase mb-4">AI Tools</span>
+                <h2 class="text-4xl font-semibold text-center mb-4">AI 工具</h2>
+                <p class="text-apple-text text-center max-w-2xl mx-auto leading-relaxed">
+                    由 AI 精心打造的智能工具集，更多 AI 工具正在开发中，敬请期待。
+                </p>
+            </div>
+
+            <!-- 工具卡片网格 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- AI 早报 -->
-                <a href="ai-news.html" class="bg-apple-gray rounded-2xl overflow-hidden card-hover tool-card block">
-                    <div class="h-40 bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
-                        <i class="fas fa-newspaper text-white text-5xl opacity-80"></i>
+                <a href="ai-news.html" class="group bg-white rounded-3xl overflow-hidden card-hover tool-card block shadow-sm border border-gray-100/50">
+                    <div class="relative h-44 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-newspaper text-white text-3xl"></i>
+                            </div>
+                        </div>
+                        <!-- 悬停光效 -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold">AI 早报</h3>
-                            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
+                            <h3 class="text-lg font-semibold group-hover:text-apple-blue transition-colors">AI 早报</h3>
+                            <span class="px-3 py-1 bg-gray-100 text-apple-text text-xs rounded-full font-medium">
                                 <i class="fas fa-robot mr-1"></i>AI
                             </span>
                         </div>
-                        <p class="text-sm text-gray-600 mb-4">每日 AI 领域最新动态、技术突破、产品发布，一站式获取前沿资讯。</p>
-                        <span class="inline-flex items-center text-apple-blue hover:underline text-sm font-medium">
-                            立即使用 <i class="fas fa-arrow-right ml-1"></i>
+                        <p class="text-sm text-apple-text mb-5 leading-relaxed">每日 AI 领域最新动态、技术突破、产品发布，一站式获取前沿资讯。</p>
+                        <span class="inline-flex items-center text-apple-blue text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                            立即使用 <i class="fas fa-arrow-right ml-2"></i>
                         </span>
                     </div>
                 </a>
 
                 <!-- 在线翻译 -->
-                <a href="translate.html" class="bg-apple-gray rounded-2xl overflow-hidden card-hover tool-card block">
-                    <div class="h-40 bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
-                        <i class="fas fa-language text-white text-5xl opacity-80"></i>
+                <a href="translate.html" class="group bg-white rounded-3xl overflow-hidden card-hover tool-card block shadow-sm border border-gray-100/50">
+                    <div class="relative h-44 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-violet-600 to-violet-800"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-language text-white text-3xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold">在线翻译</h3>
-                            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
-                                <i class="fas fa-robot mr-1"></i>API
+                            <h3 class="text-lg font-semibold group-hover:text-apple-blue transition-colors">在线翻译</h3>
+                            <span class="px-3 py-1 bg-gray-100 text-apple-text text-xs rounded-full font-medium">
+                                <i class="fas fa-plug mr-1"></i>API
                             </span>
                         </div>
-                        <p class="text-sm text-gray-600 mb-4">支持多行文本批量翻译，百度翻译 API 驱动，快速准确。</p>
-                        <span class="inline-flex items-center text-apple-blue hover:underline text-sm font-medium">
-                            立即使用 <i class="fas fa-arrow-right ml-1"></i>
+                        <p class="text-sm text-apple-text mb-5 leading-relaxed">支持多行文本批量翻译，百度翻译 API 驱动，快速准确。</p>
+                        <span class="inline-flex items-center text-apple-blue text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                            立即使用 <i class="fas fa-arrow-right ml-2"></i>
                         </span>
                     </div>
                 </a>
 
                 <!-- 海龟汤生成器 -->
-                <a href="turtle-soup.html" class="bg-apple-gray rounded-2xl overflow-hidden card-hover tool-card block">
-                    <div class="h-40 bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center">
-                        <i class="fas fa-utensils text-white text-5xl opacity-80"></i>
+                <a href="turtle-soup.html" class="group bg-white rounded-3xl overflow-hidden card-hover tool-card block shadow-sm border border-gray-100/50">
+                    <div class="relative h-44 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 to-emerald-800"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-utensils text-white text-3xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold">海龟汤生成器</h3>
-                            <span class="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
+                            <h3 class="text-lg font-semibold group-hover:text-apple-blue transition-colors">海龟汤</h3>
+                            <span class="px-3 py-1 bg-gray-100 text-apple-text text-xs rounded-full font-medium">
                                 <i class="fas fa-robot mr-1"></i>AI
                             </span>
                         </div>
-                        <p class="text-sm text-gray-600 mb-4">AI 驱动的逻辑推理谜题生成器。清汤、红汤、黑汤，多种风格一键生成。</p>
-                        <span class="inline-flex items-center text-apple-blue hover:underline text-sm font-medium">
-                            立即使用 <i class="fas fa-arrow-right ml-1"></i>
+                        <p class="text-sm text-apple-text mb-5 leading-relaxed">AI 驱动的逻辑推理谜题生成器。清汤、红汤、黑汤，多种风格一键生成。</p>
+                        <span class="inline-flex items-center text-apple-blue text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                            立即使用 <i class="fas fa-arrow-right ml-2"></i>
                         </span>
                     </div>
                 </a>
             </div>
 
             <!-- 更多工具占位 -->
-            <div class="mt-12 text-center">
-                <div class="inline-flex items-center gap-2 text-gray-400">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>更多工具正在开发中...</span>
+            <div class="mt-16 text-center">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-gray-50 rounded-full text-apple-text">
+                    <i class="fas fa-spinner fa-spin text-sm"></i>
+                    <span class="text-sm font-medium">更多工具正在开发中...</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 工具特点 -->
-    <section class="py-12 bg-apple-gray">
-        <div class="max-w-6xl mx-auto px-6">
+    <section id="features" class="py-24 bg-gradient-to-b from-gray-50 to-apple-gray relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute top-0 left-0 right-0 h-px decorative-line"></div>
+        <div class="absolute inset-0 bg-texture opacity-50"></div>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <!-- 标题 -->
+            <div class="text-center mb-16">
+                <span class="inline-block text-xs font-semibold text-apple-blue tracking-widest uppercase mb-4">Why Choose Us</span>
+                <h2 class="text-3xl md:text-4xl font-semibold mb-4">核心优势</h2>
+            </div>
+
+            <!-- 特点卡片 -->
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <i class="fas fa-brain text-2xl text-gray-700"></i>
+                <!-- AI 驱动 -->
+                <div class="group bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-100/50 transition-all duration-500">
+                    <div class="relative mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-brain text-2xl text-apple-blue"></i>
+                        </div>
                     </div>
-                    <h3 class="font-semibold mb-2">AI 驱动</h3>
-                    <p class="text-sm text-gray-600">利用人工智能技术，智能识别和处理各类数据</p>
+                    <h3 class="text-xl font-semibold mb-3">AI 驱动</h3>
+                    <p class="text-apple-text leading-relaxed">利用先进的人工智能技术，智能识别和处理各类数据，提供精准的解决方案。</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <i class="fas fa-cloud text-2xl text-gray-700"></i>
+
+                <!-- 隐私保护 -->
+                <div class="group bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-100/50 transition-all duration-500">
+                    <div class="relative mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-shield-halved text-2xl text-emerald-600"></i>
+                        </div>
                     </div>
-                    <h3 class="font-semibold mb-2">云端处理</h3>
-                    <p class="text-sm text-gray-600">所有数据在浏览器中处理，不上传服务器，保护隐私安全</p>
+                    <h3 class="text-xl font-semibold mb-3">隐私保护</h3>
+                    <p class="text-apple-text leading-relaxed">所有数据在浏览器本地处理，不上传服务器，严格保护用户隐私安全。</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <i class="fas fa-bolt text-2xl text-gray-700"></i>
+
+                <!-- 快速高效 -->
+                <div class="group bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-100/50 transition-all duration-500">
+                    <div class="relative mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-violet-50 to-violet-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-bolt text-2xl text-violet-600"></i>
+                        </div>
                     </div>
-                    <h3 class="font-semibold mb-2">快速高效</h3>
-                    <p class="text-sm text-gray-600">基于 Web 技术构建，响应迅速，操作流畅</p>
+                    <h3 class="text-xl font-semibold mb-3">快速高效</h3>
+                    <p class="text-apple-text leading-relaxed">基于现代 Web 技术构建，响应迅速，操作流畅，带来极致的使用体验。</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer class="bg-apple-dark text-white py-12">
+    <footer class="bg-apple-dark text-white py-16 relative">
+        <!-- 装饰 -->
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+
         <div class="max-w-6xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                        <i class="fas fa-robot text-apple-dark text-lg"></i>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+                <!-- Logo -->
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-microchip text-white text-xl"></i>
                     </div>
-                    <span class="font-semibold text-lg">PlayAI</span>
+                    <div>
+                        <span class="font-semibold text-xl">PlayAI</span>
+                        <p class="text-xs text-gray-500 mt-1">AI 智能工具箱</p>
+                    </div>
                 </div>
-                <div class="flex gap-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-github text-xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fas fa-envelope text-xl"></i></a>
+
+                <!-- 链接 -->
+                <div class="flex gap-8">
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">使用条款</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">隐私政策</a>
+                    <a href="docs/" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">文档</a>
+                </div>
+
+                <!-- 社交图标 -->
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fas fa-envelope"></i>
+                    </a>
                 </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-                <p>&copy; 2026 PlayAI. All rights reserved.</p>
+
+            <!-- 版权 -->
+            <div class="pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2026 PlayAI. All rights reserved.</p>
             </div>
         </div>
     </footer>

@@ -6,13 +6,14 @@
     <title>AI 早报 | PlayAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'sans': ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                        'display': ['Playfair Display', 'Georgia', 'serif'],
                     },
                     colors: {
                         'apple-gray': '#f5f5f7',
@@ -20,10 +21,14 @@
                         'apple-light': '#fbfbfd',
                         'apple-blue': '#0071e3',
                         'apple-blue-hover': '#0077ed',
+                        'apple-border': '#d2d2d7',
+                        'apple-text': '#86868b',
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.6s ease-out',
-                        'fade-in-up': 'fadeInUp 0.8s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'fade-in-up': 'fadeInUp 1s ease-out',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -31,8 +36,16 @@
                             '100%': { opacity: '1' },
                         },
                         fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' },
                         }
                     }
                 }
@@ -44,122 +57,217 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+
+        /* 背景纹理 */
+        .bg-texture {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 113, 227, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 113, 227, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(0, 113, 227, 0.03) 0%, transparent 50%);
         }
+
+        /* 高级毛玻璃效果 */
+        .glass-premium {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+        }
+
+        /* 渐变背景 */
         .hero-gradient {
-            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #fafafa 50%, #f5f5f7 100%);
         }
+
+        .hero-glow {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 113, 227, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0, 113, 227, 0.05) 0%, transparent 50%);
+        }
+
+        /* 卡片悬停效果 */
         .card-hover {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-12px);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.08),
+                0 20px 40px rgba(0, 0, 0, 0.04);
         }
+
+        /* 按钮效果 */
         .btn-apple {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-apple::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .btn-apple:hover::before {
+            opacity: 1;
         }
         .btn-apple:hover {
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
+
+        /* 导航链接 */
         .nav-link {
             position: relative;
+            font-weight: 500;
         }
         .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 0;
+            bottom: -6px;
+            left: 50%;
             width: 0;
             height: 2px;
-            background: #1d1d1f;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, transparent, #0071e3, transparent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
         .nav-link:hover::after {
             width: 100%;
         }
+
+        /* 行数限制 */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        /* 交错动画延迟 */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        /* Beta 标签 */
+        .beta-tag {
+            background: linear-gradient(135deg, #0071e3 0%, #5ac8fa 100%);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* 在线状态指示器 */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(52, 199, 89, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(52, 199, 89, 0.6); }
+            50% { opacity: 0.7; box-shadow: 0 0 16px rgba(52, 199, 89, 0.8); }
+        }
     </style>
 </head>
-<body class="bg-apple-gray text-apple-dark font-sans">
+<body class="bg-apple-gray text-apple-dark font-sans bg-texture">
     <!-- 导航栏 -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-gray-200/50">
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-premium border-b border-apple-border/30">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <a href="index.html" class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-apple-dark rounded-xl flex items-center justify-center">
-                        <i class="fas fa-robot text-white text-lg"></i>
+                <div class="relative">
+                    <div class="w-10 h-10 bg-gradient-to-br from-apple-dark to-gray-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-microchip text-white text-lg"></i>
                     </div>
-                    <span class="font-semibold text-lg tracking-tight">PlayAI</span>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white pulse-dot"></div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="index.html" class="font-semibold text-lg tracking-tight hover:text-apple-blue transition-colors">PlayAI</a>
+                    <span class="hidden sm:inline text-xs text-apple-text bg-gray-100 px-2 py-0.5 rounded-full">Beta</span>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-10">
+                <a href="index.html" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">首页</a>
+                <a href="index.html#tools" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">工具</a>
+                <a href="docs/" class="nav-link text-sm text-apple-text hover:text-apple-dark transition-colors">知识库</a>
+                <a href="https://github.com" target="_blank" class="text-apple-text hover:text-apple-dark transition-colors">
+                    <i class="fab fa-github text-lg"></i>
                 </a>
             </div>
-            <div class="hidden md:flex gap-8">
-                <a href="index.html" class="nav-link text-sm text-gray-600 hover:text-apple-dark">首页</a>
-                <a href="index.html#tools" class="nav-link text-sm text-gray-600 hover:text-apple-dark">工具</a>
-                <a href="docs/" class="nav-link text-sm text-gray-600 hover:text-apple-dark">知识库</a>
-            </div>
-            <button class="md:hidden text-xl">
+            <button class="md:hidden text-xl text-apple-dark">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
 
     <!-- 主内容 -->
-    <div class="pt-24 pb-16 px-4 min-h-screen hero-gradient">
+    <div class="pt-24 pb-16 px-4 min-h-screen hero-gradient hero-glow">
         <div class="max-w-6xl mx-auto">
             <!-- 头部 -->
-            <header class="text-center mb-10 animate-fade-in-up">
-                <div class="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-sm text-gray-600">每日 AI 资讯</span>
+            <header class="text-center mb-12 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-5 py-2.5 rounded-full mb-6 shadow-sm border border-gray-100">
+                    <div class="status-indicator"></div>
+                    <span class="text-sm text-apple-text font-medium">每日 AI 资讯</span>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-semibold mb-4">
+                <h1 class="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
                     AI 早报
                 </h1>
-                <p class="text-gray-500">每日 AI 领域最新动态、技术突破、产品发布，一站式获取前沿资讯。</p>
+                <p class="text-apple-text max-w-xl mx-auto">每日 AI 领域最新动态、技术突破、产品发布，一站式获取前沿资讯。</p>
             </header>
 
             <!-- RSS源选择 -->
-            <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-rss text-gray-400"></i>
-                        <span class="font-medium">选择资讯源</span>
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 mb-8 shadow-xl border border-gray-100/50 animate-fade-in-up delay-100">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-apple-gray rounded-xl flex items-center justify-center">
+                            <i class="fas fa-rss text-apple-text"></i>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-lg">选择资讯源</span>
+                            <p class="text-xs text-apple-text">勾选想要查看的来源</p>
+                        </div>
                     </div>
-                    <button id="refresh-btn" onclick="fetchAllNews()" class="btn-apple px-4 py-2 bg-apple-dark text-white rounded-lg text-sm hover:bg-gray-800">
-                        <i class="fas fa-sync mr-2" id="refresh-icon"></i>刷新
+                    <button id="refresh-btn" onclick="fetchAllNews()" class="btn-apple px-5 py-2.5 bg-apple-dark text-white rounded-full text-sm font-medium hover:bg-gray-800 shadow-lg">
+                        <i class="fas fa-sync mr-2" id="refresh-icon"></i>刷新资讯
                     </button>
                 </div>
                 <div class="flex flex-wrap gap-3" id="source-selector">
                     <label class="source-checkbox cursor-pointer">
                         <input type="checkbox" value="jiqizhixin" checked class="hidden peer">
-                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                        <span class="px-5 py-2.5 rounded-full bg-apple-gray border border-transparent text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2 font-medium">
+                            <i class="fas fa-microchip text-xs"></i>
                             机器之心
                         </span>
                     </label>
                     <label class="source-checkbox cursor-pointer">
                         <input type="checkbox" value="openai" checked class="hidden peer">
-                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                        <span class="px-5 py-2.5 rounded-full bg-apple-gray border border-transparent text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2 font-medium">
+                            <i class="fas fa-brain text-xs"></i>
                             OpenAI
                         </span>
                     </label>
                     <label class="source-checkbox cursor-pointer">
                         <input type="checkbox" value="googleai" checked class="hidden peer">
-                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                        <span class="px-5 py-2.5 rounded-full bg-apple-gray border border-transparent text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2 font-medium">
+                            <i class="fab fa-google text-xs"></i>
                             Google AI
                         </span>
                     </label>
                     <label class="source-checkbox cursor-pointer">
                         <input type="checkbox" value="infoq" checked class="hidden peer">
-                        <span class="px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2">
+                        <span class="px-5 py-2.5 rounded-full bg-apple-gray border border-transparent text-sm peer-checked:bg-apple-dark peer-checked:text-white peer-checked:border-apple-dark transition-all flex items-center gap-2 font-medium">
+                            <i class="fas fa-code text-xs"></i>
                             InfoQ
                         </span>
                     </label>
@@ -168,24 +276,26 @@
 
             <!-- 加载状态 -->
             <div id="loading-status" class="hidden mb-8">
-                <div class="flex flex-col items-center gap-3 py-8">
-                    <div class="flex gap-2">
-                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce"></span>
-                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce" style="animation-delay: 0.1s;"></span>
-                        <span class="w-3 h-3 rounded-full bg-apple-dark animate-bounce" style="animation-delay: 0.2s;"></span>
+                <div class="flex flex-col items-center gap-3 py-12">
+                    <div class="flex gap-3">
+                        <span class="w-3 h-3 rounded-full bg-apple-blue animate-bounce"></span>
+                        <span class="w-3 h-3 rounded-full bg-apple-blue animate-bounce" style="animation-delay: 0.1s;"></span>
+                        <span class="w-3 h-3 rounded-full bg-apple-blue animate-bounce" style="animation-delay: 0.2s;"></span>
                     </div>
-                    <span class="text-sm text-gray-500">正在获取最新资讯...</span>
+                    <span class="text-sm text-apple-text">正在获取最新资讯...</span>
                 </div>
             </div>
 
             <!-- 刷新结果提示 -->
-            <div id="refresh-toast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl px-6 py-4 border border-gray-200 shadow-lg animate-fade-in">
-                <div class="flex items-center gap-3">
-                    <i id="toast-icon" class="fas fa-check-circle w-5 h-5 text-green-500"></i>
-                    <div id="toast-content" class="text-sm"></div>
-                    <button onclick="hideToast()" class="ml-2 text-gray-400 hover:text-gray-600 transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
+            <div id="refresh-toast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50">
+                <div class="bg-white/90 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-2xl border border-gray-100 animate-fade-in-up">
+                    <div class="flex items-center gap-3">
+                        <i id="toast-icon" class="fas fa-check-circle w-5 h-5 text-green-500"></i>
+                        <div id="toast-content" class="text-sm text-apple-dark font-medium"></div>
+                        <button onclick="hideToast()" class="ml-2 text-apple-text hover:text-apple-dark transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -196,10 +306,10 @@
 
     <!-- 模态框 -->
     <div id="news-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/50" onclick="closeModal()"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                <button onclick="closeModal()" class="sticky top-4 float-right mr-4 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all z-50">
+            <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                <button onclick="closeModal()" class="sticky top-4 float-right mr-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center text-apple-text hover:text-apple-dark hover:bg-white transition-all z-50">
                     <i class="fas fa-times"></i>
                 </button>
                 <div id="modal-body" class="clear-both"></div>
@@ -208,13 +318,48 @@
     </div>
 
     <!-- 页脚 -->
-    <footer class="bg-apple-dark text-white py-8">
-        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-sm text-gray-400">
-                <i class="fas fa-heart text-red-500"></i>
-                <span>Made with AI</span>
+    <footer class="bg-apple-dark text-white py-16 relative">
+        <!-- 装饰 -->
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+                <!-- Logo -->
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-microchip text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-xl">PlayAI</span>
+                        <p class="text-xs text-gray-500 mt-1">AI 智能工具箱</p>
+                    </div>
+                </div>
+
+                <!-- 链接 -->
+                <div class="flex gap-8">
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">使用条款</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">隐私政策</a>
+                    <a href="docs/" class="text-gray-400 hover:text-white transition-all duration-300 text-sm">文档</a>
+                </div>
+
+                <!-- 社交图标 -->
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
             </div>
-            <div class="text-sm text-gray-500">&copy; 2026 PlayAI. All rights reserved.</div>
+
+            <!-- 版权 -->
+            <div class="pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2026 PlayAI. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
@@ -372,8 +517,8 @@
                 console.error('获取新闻失败:', error);
                 document.getElementById('news-grid').innerHTML = `
                     <div class="col-span-full text-center py-12">
-                        <div class="text-gray-500 mb-2">获取新闻失败</div>
-                        <div class="text-sm text-gray-400">${error.message || '请稍后重试'}</div>
+                        <div class="text-apple-text mb-2">获取新闻失败</div>
+                        <div class="text-sm text-apple-text/60">${error.message || '请稍后重试'}</div>
                     </div>
                 `;
                 showToast(`获取资讯失败: ${error.message || '未知错误'}`, 'error');
@@ -417,26 +562,34 @@
             if (newsData.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12">
-                        <div class="text-gray-400 mb-2">暂无资讯</div>
+                        <div class="text-apple-text mb-2">暂无资讯</div>
                         <button onclick="fetchAllNews()" class="text-apple-blue hover:underline">点击刷新</button>
                     </div>
                 `;
                 return;
             }
 
-            grid.innerHTML = newsData.map(news => `
-                <div class="bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer" onclick="openModal('${news.id}')">
-                    <div class="relative h-44 overflow-hidden">
-                        <img src="${news.image}" alt="${news.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'" referrerpolicy="no-referrer">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute top-3 left-3">
-                            <span class="${news.tagClass} px-2 py-1 rounded text-xs font-medium">${news.tag}</span>
+            grid.innerHTML = newsData.map((news, index) => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100/50 card-hover cursor-pointer animate-fade-in-up" style="animation-delay: ${index * 0.05}s" onclick="openModal('${news.id}')">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${news.image}" alt="${news.title}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'" referrerpolicy="no-referrer">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="${news.tagClass} px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm">${news.tag}</span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4">
+                            <span class="text-white/90 text-xs font-medium">${news.source}</span>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold mb-2 line-clamp-2 group-hover:text-apple-blue transition-colors">${news.title}</h3>
-                        <p class="text-sm text-gray-500 line-clamp-2">${news.summary}</p>
-                        <div class="mt-3 text-xs text-gray-400">${news.time} · ${news.source}</div>
+                    <div class="p-5">
+                        <h3 class="font-semibold mb-2 line-clamp-2 text-apple-dark hover:text-apple-blue transition-colors">${news.title}</h3>
+                        <p class="text-sm text-apple-text line-clamp-2 mb-3">${news.summary}</p>
+                        <div class="flex items-center justify-between text-xs text-apple-text/60">
+                            <span>${news.time}</span>
+                            <span class="flex items-center gap-1">
+                                <i class="fas fa-arrow-right text-xs text-apple-blue"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -450,23 +603,24 @@
             const body = document.getElementById('modal-body');
             body.innerHTML = `
                 <div class="relative">
-                    <div class="h-56 overflow-hidden">
+                    <div class="h-64 overflow-hidden rounded-t-3xl">
                         <img src="${news.image}" alt="${news.title}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'" referrerpolicy="no-referrer">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center gap-3 mb-3">
-                            <span class="${news.tagClass} px-2 py-1 rounded text-xs font-medium">${news.tag}</span>
-                            <span class="text-sm text-gray-500">${news.time}</span>
+                    <div class="p-8">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="${news.tagClass} px-3 py-1 rounded-lg text-xs font-semibold">${news.tag}</span>
+                            <span class="text-sm text-apple-text">${news.time}</span>
                             <span class="text-gray-300">·</span>
-                            <span class="text-sm text-apple-blue">${news.source}</span>
+                            <span class="text-sm text-apple-blue font-medium">${news.source}</span>
                         </div>
-                        <h2 class="text-xl font-semibold mb-4">${news.title}</h2>
-                        <div class="text-gray-600 leading-relaxed mb-6">${news.content}</div>
+                        <h2 class="text-2xl font-semibold mb-4 text-apple-dark">${news.title}</h2>
+                        <div class="text-apple-text leading-relaxed mb-6">${news.content}</div>
                         <div class="flex gap-3">
-                            <a href="${news.link}" target="_blank" class="px-4 py-2 bg-apple-dark text-white rounded-lg text-sm hover:bg-gray-800 transition-all">
+                            <a href="${news.link}" target="_blank" class="btn-apple px-5 py-2.5 bg-apple-dark text-white rounded-full text-sm font-medium hover:bg-gray-800 shadow-lg">
                                 <i class="fas fa-external-link-alt mr-2"></i>查看原文
                             </a>
-                            <button onclick="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm hover:bg-gray-200 transition-all">
+                            <button onclick="closeModal()" class="px-5 py-2.5 bg-apple-gray text-apple-text rounded-full text-sm font-medium hover:bg-gray-200 transition-all">
                                 关闭
                             </button>
                         </div>
