@@ -521,9 +521,10 @@
         // 翻译单行
         async function translateLine(text, from, to, appid, key) {
             const salt = Math.random().toString(36).substr(2, 10);
-            // 对 text 进行 URL 编码，确保签名计算和实际请求一致
+            // 签名用原始文本（不需要编码）
+            const sign = md5(appid + text + salt + key);
+            // 请求中的 q 需要 URL 编码
             const encodedText = encodeURIComponent(text);
-            const sign = md5(appid + encodedText + salt + key);
 
             // 获取用户配置的代理地址
             const proxyUrl = document.getElementById('proxy-input').value.trim();
@@ -547,7 +548,7 @@
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: `q=${encodeURIComponent(text)}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`
+                    body: `q=${encodedText}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`
                 });
 
                 const data = await response.json();

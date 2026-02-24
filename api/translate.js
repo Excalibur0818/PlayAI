@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      // 客户端已经对 q 进行了 URL 编码，直接使用
+      // 客户端已经对 q 进行了 URL 编码，直接使用 q
       body: `q=${q}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`
     });
 
