@@ -128,22 +128,11 @@
                     设置
                 </h2>
 
-                <!-- 模型选择 -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-600 mb-3">选择 AI 模型</label>
-                    <select id="model-select" onchange="saveApiKey()" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-apple-blue transition-colors">
-                        <option value="">-- 请选择模型 --</option>
-                        <option value="minimax">MiniMax</option>
-                        <option value="deepseek">DeepSeek</option>
-                        <option value="glm">GLM (智谱)</option>
-                    </select>
-                </div>
-
                 <!-- API Key 输入 -->
-                <div class="mb-6" id="api-key-container">
-                    <label class="block text-sm font-medium text-gray-600 mb-3" id="api-key-label">API Key</label>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-600 mb-3">DeepSeek API Key</label>
                     <div class="relative">
-                        <input type="password" id="api-key-input" placeholder="请输入 API Key" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-apple-blue transition-colors">
+                        <input type="password" id="api-key-input" placeholder="请输入 DeepSeek API Key" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-apple-blue transition-colors">
                         <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                             <i class="fas fa-eye" id="eye-icon"></i>
                         </button>
@@ -273,12 +262,6 @@
         let currentSoupType = 'clear';
         let currentDifficulty = 'easy';
 
-        const API_KEYS = {
-            minimax: localStorage.getItem('playai_minimax_key') || '',
-            deepseek: localStorage.getItem('playai_deepseek_key') || '',
-            glm: localStorage.getItem('playai_glm_key') || ''
-        };
-
         // 选择汤类型
         function selectSoupType(type) {
             currentSoupType = type;
@@ -311,28 +294,17 @@
 
         // 生成海龟汤
         async function generateSoup() {
-            // 获取当前选择的模型和 API Key
-            const selectedModel = document.getElementById('model-select').value;
+            // 获取 API Key
             const apiKey = document.getElementById('api-key-input').value.trim();
 
-            // 如果选择了模型但没有输入 API Key
-            if (selectedModel && !apiKey) {
-                alert('请输入 API Key');
+            // 没有输入 API Key
+            if (!apiKey) {
+                alert('请输入 DeepSeek API Key');
                 return;
             }
 
             // 保存 API Key
-            if (selectedModel && apiKey) {
-                localStorage.setItem(`playai_selected_model`, selectedModel);
-                localStorage.setItem(`playai_${selectedModel}_key`, apiKey);
-            }
-
-            // 更新 API_KEYS 对象
-            const currentApiKeys = {
-                minimax: selectedModel === 'minimax' ? apiKey : (localStorage.getItem('playai_minimax_key') || ''),
-                deepseek: selectedModel === 'deepseek' ? apiKey : (localStorage.getItem('playai_deepseek_key') || ''),
-                glm: selectedModel === 'glm' ? apiKey : (localStorage.getItem('playai_glm_key') || '')
-            };
+            localStorage.setItem('playai_deepseek_key', apiKey);
 
             // 显示加载状态
             document.getElementById('loading').classList.remove('hidden');
@@ -369,51 +341,19 @@
 请直接输出JSON，不要有其他内容。`;
 
             try {
-                let result;
-
-                if (selectedModel === 'minimax' && apiKey) {
-                    result = await callMiniMax(prompt, apiKey);
-                } else if (selectedModel === 'deepseek' && apiKey) {
-                    result = await callDeepSeek(prompt, apiKey);
-                } else if (selectedModel === 'glm' && apiKey) {
-                    result = await callGLM(prompt, apiKey);
-                } else if (currentApiKeys.minimax) {
-                    result = await callMiniMax(prompt, currentApiKeys.minimax);
-                } else if (currentApiKeys.deepseek) {
-                    result = await callDeepSeek(prompt, currentApiKeys.deepseek);
-                } else if (currentApiKeys.glm) {
-                    result = await callGLM(prompt, currentApiKeys.glm);
-                } else {
-                    // 使用示例数据
-                    result = getExampleSoup();
-                }
-
-                const data = JSON.parse(result);
+                const result = await callDeepSeek(prompt, apiKey);
+                // 去掉 Markdown 包装（如 ```json ... ```）
+                const jsonMatch = result.match(/```json\n?([\s\S]*?)```/) || result.match(/```\n?([\s\S]*?)```/) || [null, result];
+                const jsonStr = jsonMatch[1].trim();
+                const data = JSON.parse(jsonStr);
                 showResult(data);
             } catch (error) {
                 console.error('生成失败:', error);
-                alert('生成失败，请重试或配置 API Key');
+                alert('生成失败: ' + error.message);
             } finally {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('generate-btn').disabled = false;
             }
-        }
-
-        // 调用 MiniMax API
-        async function callMiniMax(prompt, apiKey) {
-            const response = await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: 'abab6.5s-chat',
-                    messages: [{ role: 'user', content: prompt }]
-                })
-            });
-            const data = await response.json();
-            return data.choices[0].message.content;
         }
 
         // 调用 DeepSeek API
@@ -429,47 +369,14 @@
                     messages: [{ role: 'user', content: prompt }]
                 })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `API 错误: ${response.status}`);
+            }
+
             const data = await response.json();
             return data.choices[0].message.content;
-        }
-
-        // 调用 GLM API
-        async function callGLM(prompt, apiKey) {
-            const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: 'glm-4',
-                    messages: [{ role: 'user', content: prompt }]
-                })
-            });
-            const data = await response.json();
-            return data.choices[0].message.content;
-        }
-
-        // 示例数据
-        function getExampleSoup() {
-            const examples = [
-                {
-                    question: '一名男子走进一家餐厅，点了一碗海龟汤。喝完后，他走出餐厅，突然想到了什么，就自杀了。这是为什么？',
-                    answer: '这名男子曾经和妻子、儿子去海边度假。他的儿子不小心淹死了，尸体被海龟吃掉了。后来他吃到真正的海龟汤，发现味道和当年儿子尸体被发现的场景中的某种东西的味道一样，他意识到自己可能吃了儿子的尸体，精神崩溃就自杀了。',
-                    hint: '这道汤让他想起了不好的回忆。'
-                },
-                {
-                    question: '一个人在黑暗中点燃了一根火柴，看到了一个可怕的东西，然后就死了。这是为什么？',
-                    answer: '这个人是一个矿工，矿坑发生了瓦斯泄漏。他点燃火柴后引发了爆炸，所以死了。',
-                    hint: '火柴点燃的气体是致命的。'
-                },
-                {
-                    question: '一名女子在野外露营，第二天早上醒来后发现自己的珠宝不见了。她立刻报了警，警察很快抓到了嫌疑人。但是嫌疑人说我没有偷珠宝，这是怎么回事？',
-                    answer: '珠宝其实是被女子的宠物狗吞下去了。嫌疑人是一只经过训练的警犬，它通过气味找到了珠宝所在，但是珠宝已经在狗的胃里了。',
-                    hint: '珠宝还在营地里。'
-                }
-            ];
-            return JSON.stringify(examples[Math.floor(Math.random() * examples.length)]);
         }
 
         // 显示结果
@@ -529,18 +436,6 @@
             document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
         }
 
-        // 保存 API Key
-        function saveApiKey() {
-            const model = document.getElementById('model-select').value;
-            const apiKey = document.getElementById('api-key-input').value.trim();
-
-            if (model && apiKey) {
-                localStorage.setItem(`playai_${model}_key`, apiKey);
-                // 更新当前使用的 API_KEYS
-                API_KEYS[model] = apiKey;
-            }
-        }
-
         // 切换 API Key 显示/隐藏
         function toggleApiKeyVisibility() {
             const input = document.getElementById('api-key-input');
@@ -557,34 +452,12 @@
 
         // 加载保存的设置
         function loadSettings() {
-            // 加载模型选择
-            const savedModel = localStorage.getItem('playai_selected_model');
-            if (savedModel) {
-                document.getElementById('model-select').value = savedModel;
-            }
-
-            // 加载当前模型的 API Key
-            if (savedModel) {
-                const savedKey = localStorage.getItem(`playai_${savedModel}_key`);
-                if (savedKey) {
-                    document.getElementById('api-key-input').value = savedKey;
-                }
+            // 加载 DeepSeek API Key
+            const savedKey = localStorage.getItem('playai_deepseek_key');
+            if (savedKey) {
+                document.getElementById('api-key-input').value = savedKey;
             }
         }
-
-        // 模型选择变化时加载对应的 API Key
-        document.getElementById('model-select').addEventListener('change', function() {
-            const model = this.value;
-            localStorage.setItem('playai_selected_model', model);
-
-            // 加载对应模型的 API Key
-            if (model) {
-                const savedKey = localStorage.getItem(`playai_${model}_key`);
-                document.getElementById('api-key-input').value = savedKey || '';
-            } else {
-                document.getElementById('api-key-input').value = '';
-            }
-        });
 
         // 初始化
         selectSoupType('clear');

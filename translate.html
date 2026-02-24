@@ -536,15 +536,6 @@
                 throw new Error(data.error);
             }
             return data.trans_result[0].dst;
-
-                const data = await response.json();
-
-                if (data.error_code) {
-                    throw new Error(data.error_msg || '翻译失败');
-                }
-
-                return data.trans_result[0].dst;
-            }
         }
 
         // HTML 转义
