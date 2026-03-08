@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>围住小猫 - PlayAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        'apple-gray': '#f5f5f7',
+                        'apple-dark': '#1d1d1f',
+                        'apple-blue': '#0071e3',
+                        'apple-border': '#d2d2d7',
+                        'apple-text': '#86868b',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'bounce-in': 'bounceIn 0.5s ease-out',
+                        'shake': 'shake 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0)' },
+                            '50%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)' },
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-5px)' },
+                            '75%': { transform: 'translateX(5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+        }
+        body {
+            background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+            min-height: 100vh;
+        }
+        .game-cell {
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .game-cell:hover:not(.occupied):not(.cat) {
+            transform: scale(1.05);
+            background: rgba(0, 113, 227, 0.1);
+        }
+        .cat-icon {
+            animation: catBounce 1s ease-in-out infinite;
+        }
+        @keyframes catBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .wall {
+            background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+        }
+        .win-glow {
+            box-shadow: 0 0 60px rgba(34, 197, 94, 0.4);
+        }
+        .lose-glow {
+            box-shadow: 0 0 60px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+<body class="font-sans text-apple-dark">
+    <!-- 导航 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div class="w-9 h-9 bg-gradient-to-br from-apple-dark to-gray-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-microchip text-white text-sm"></i>
+                </div>
+                <span class="font-semibold">PlayAI</span>
+            </a>
+            <a href="index.html#tools" class="text-sm text-apple-text hover:text-apple-dark transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>返回工具
+            </a>
+        </div>
+    </nav>
+
+    <main class="pt-28 pb-12 px-4">
+        <div class="max-w-lg mx-auto">
+            <!-- 标题 -->
+            <div class="text-center mb-8 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 mb-4">
+                    <i class="fas fa-paw text-apple-blue"></i>
+                    <span class="text-sm font-medium">益智游戏</span>
+                </div>
+                <h1 class="text-3xl font-semibold mb-2">围住小猫</h1>
+                <p class="text-apple-text text-sm">点击空格放置障碍物，把会主动找最短出路的小猫困在棋盘里！</p>
+            </div>
+
+            <!-- 游戏状态 -->
+            <div class="flex justify-between items-center mb-6 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 animate-fade-in-up">
+                <div class="text-center">
+                    <p class="text-xs text-apple-text mb-1">步数</p>
+                    <p id="stepCount" class="text-2xl font-semibold">0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-apple-text mb-1">状态</p>
+                    <p id="gameStatus" class="text-sm font-medium text-apple-blue">进行中</p>
+                </div>
+                <button onclick="initGame()" class="px-4 py-2 bg-apple-dark text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+                    <i class="fas fa-redo mr-1"></i>重置
+                </button>
+            </div>
+
+            <!-- 游戏棋盘 -->
+            <div id="gameBoard" class="bg-white rounded-3xl p-4 shadow-lg border border-gray-100 mx-auto animate-fade-in-up" style="width: fit-content;">
+            </div>
+
+            <!-- 说明 -->
+            <div class="mt-8 bg-white/50 rounded-2xl p-5 border border-gray-100 animate-fade-in-up">
+                <h3 class="font-semibold mb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-apple-blue"></i>
+                    游戏规则
+                </h3>
+                <ul class="text-sm text-apple-text space-y-2">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>点击空格放置障碍物（墙壁）</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>每放置一个障碍物，小猫会智能评估路线并移动一步</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>如果小猫到达边界，玩家输掉游戏</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>把小猫困住让它无法移动，即可获胜</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const BOARD_SIZE = 10;
+        const OBSTACLE_COUNT = 8;
+        const DIRECTIONS = [
+            { dx: 0, dy: -1 },
+            { dx: 0, dy: 1 },
+            { dx: -1, dy: 0 },
+            { dx: 1, dy: 0 }
+        ];
+        let board = [];
+        let catPosition = { x: 0, y: 0 };
+        let stepCount = 0;
+        let gameOver = false;
+
+        function initGame() {
+            board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
+            stepCount = 0;
+            gameOver = false;
+
+            // 随机放置小猫在中心区域
+            catPosition = {
+                x: Math.floor(BOARD_SIZE / 2),
+                y: Math.floor(BOARD_SIZE / 2)
+            };
+
+            // 随机放置障碍物
+            let placed = 0;
+            while (placed < OBSTACLE_COUNT) {
+                const x = Math.floor(Math.random() * BOARD_SIZE);
+                const y = Math.floor(Math.random() * BOARD_SIZE);
+                if (board[y][x] === 0 && (x !== catPosition.x || y !== catPosition.y)) {
+                    board[y][x] = 1;
+                    placed++;
+                }
+            }
+
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('stepCount').textContent = stepCount;
+            document.getElementById('gameStatus').textContent = gameOver
+                ? (checkWin() ? '胜利！🎉' : '失败😢')
+                : '进行中';
+            document.getElementById('gameStatus').className = `text-sm font-medium ${
+                gameOver ? (checkWin() ? 'text-green-500' : 'text-red-500') : 'text-apple-blue'
+            }`;
+
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const boardEl = document.getElementById('gameBoard');
+            boardEl.innerHTML = '';
+
+            for (let y = 0; y < BOARD_SIZE; y++) {
+                const row = document.createElement('div');
+                row.className = 'flex gap-1';
+
+                for (let x = 0; x < BOARD_SIZE; x++) {
+                    const cell = document.createElement('div');
+                    const isCat = x === catPosition.x && y === catPosition.y;
+                    const isWall = board[y][x] === 1;
+                    const isEdge = x === 0 || x === BOARD_SIZE - 1 || y === 0 || y === BOARD_SIZE - 1;
+
+                    cell.className = `game-cell w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center cursor-pointer text-lg ${
+                        isCat ? 'cat bg-yellow-100' :
+                        isWall ? 'wall' :
+                        isEdge ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'
+                    } ${isCat ? 'cat' : ''} ${isWall ? 'occupied' : ''}`;
+
+                    if (isCat) {
+                        cell.innerHTML = '<i class="fas fa-cat cat-icon text-2xl"></i>';
+                    } else if (isWall) {
+                        cell.innerHTML = '';
+                    } else {
+                        cell.onclick = () => handleCellClick(x, y);
+                    }
+
+                    row.appendChild(cell);
+                }
+                boardEl.appendChild(row);
+            }
+
+            // 游戏结束显示结果
+            if (gameOver) {
+                if (checkWin()) {
+                    boardEl.classList.add('win-glow');
+                    boardEl.classList.remove('lose-glow');
+                } else {
+                    boardEl.classList.add('lose-glow');
+                    boardEl.classList.remove('win-glow');
+                }
+            } else {
+                boardEl.classList.remove('win-glow', 'lose-glow');
+            }
+        }
+
+        function handleCellClick(x, y) {
+            if (gameOver || board[y][x] !== 0) return;
+
+            // 放置障碍物
+            board[y][x] = 1;
+            stepCount++;
+
+            // 检查是否立即获胜（堵住小猫）
+            if (checkWin()) {
+                gameOver = true;
+                updateUI();
+                return;
+            }
+
+            // 小猫移动
+            moveCat();
+
+            // 检查小猫是否到达边界（玩家失败）
+            if (isAtEdge(catPosition.x, catPosition.y)) {
+                gameOver = true;
+                updateUI();
+                return;
+            }
+
+            // 检查是否获胜（困住小猫）
+            if (checkWin()) {
+                gameOver = true;
+            }
+
+            updateUI();
+        }
+
+        function moveCat() {
+            const moves = getValidMoves(catPosition.x, catPosition.y);
+            if (moves.length === 0) return;
+
+            const evaluatedMoves = moves.map((move) => ({
+                move,
+                score: evaluateMove(move.x, move.y)
+            }));
+
+            evaluatedMoves.sort((left, right) => right.score - left.score);
+
+            const bestScore = evaluatedMoves[0].score;
+            const nearBestMoves = evaluatedMoves.filter((item) => item.score >= bestScore - 30);
+            const selectedMove = nearBestMoves[Math.floor(Math.random() * nearBestMoves.length)];
+
+            catPosition = selectedMove.move;
+        }
+
+        function getNeighbors(x, y) {
+            return DIRECTIONS
+                .map((direction) => ({ x: x + direction.dx, y: y + direction.dy }))
+                .filter((position) => (
+                    position.x >= 0 &&
+                    position.x < BOARD_SIZE &&
+                    position.y >= 0 &&
+                    position.y < BOARD_SIZE
+                ));
+        }
+
+        function getValidMoves(x, y) {
+            return getNeighbors(x, y).filter((position) => board[position.y][position.x] === 0);
+        }
+
+        function getReachabilityMetrics(startX, startY) {
+            const visited = new Set();
+            const queue = [{ x: startX, y: startY, dist: 0 }];
+            let head = 0;
+            let area = 0;
+            let edgeCells = 0;
+            let shortestEdgeDistance = null;
+
+            visited.add(`${startX},${startY}`);
+
+            while (head < queue.length) {
+                const current = queue[head++];
+                area++;
+
+                if (isAtEdge(current.x, current.y)) {
+                    edgeCells++;
+                    if (shortestEdgeDistance === null) {
+                        shortestEdgeDistance = current.dist;
+                    }
+                }
+
+                for (const next of getNeighbors(current.x, current.y)) {
+                    const key = `${next.x},${next.y}`;
+                    if (board[next.y][next.x] !== 0 || visited.has(key)) {
+                        continue;
+                    }
+
+                    visited.add(key);
+                    queue.push({ x: next.x, y: next.y, dist: current.dist + 1 });
+                }
+            }
+
+            return {
+                area,
+                edgeCells,
+                shortestEdgeDistance
+            };
+        }
+
+        function countAdjacentWalls(x, y) {
+            let wallCount = 0;
+
+            for (const neighbor of getNeighbors(x, y)) {
+                if (board[neighbor.y][neighbor.x] === 1) {
+                    wallCount++;
+                }
+            }
+
+            return wallCount;
+        }
+
+        function distanceToClosestEdge(x, y) {
+            return Math.min(x, y, BOARD_SIZE - 1 - x, BOARD_SIZE - 1 - y);
+        }
+
+        function estimateFutureSafety(x, y) {
+            const followUpMoves = getValidMoves(x, y);
+
+            if (followUpMoves.length === 0) {
+                return -500;
+            }
+
+            let bestFollowUpScore = -Infinity;
+
+            for (const move of followUpMoves) {
+                const reachability = getReachabilityMetrics(move.x, move.y);
+                const mobility = getValidMoves(move.x, move.y).length;
+
+                let score = reachability.area * 4 + mobility * 28;
+
+                if (reachability.shortestEdgeDistance !== null) {
+                    score += 260 - reachability.shortestEdgeDistance * 35;
+                    score += reachability.edgeCells * 12;
+                } else {
+                    score -= 80;
+                }
+
+                score -= countAdjacentWalls(move.x, move.y) * 45;
+                bestFollowUpScore = Math.max(bestFollowUpScore, score);
+            }
+
+            return bestFollowUpScore;
+        }
+
+        function evaluateMove(x, y) {
+            if (isAtEdge(x, y)) {
+                return Number.MAX_SAFE_INTEGER;
+            }
+
+            const reachability = getReachabilityMetrics(x, y);
+            const mobility = getValidMoves(x, y).length;
+            const nearbyWalls = countAdjacentWalls(x, y);
+            const futureSafety = estimateFutureSafety(x, y);
+            const edgeDistance = distanceToClosestEdge(x, y);
+
+            let score = reachability.area * 14;
+            score += mobility * 90;
+            score += futureSafety;
+            score -= nearbyWalls * 120;
+            score -= edgeDistance * 10;
+
+            if (reachability.shortestEdgeDistance !== null) {
+                score += 4000 - reachability.shortestEdgeDistance * 260;
+                score += reachability.edgeCells * 60;
+            } else {
+                score -= 1400;
+            }
+
+            return score;
+        }
+
+        function isAtEdge(x, y) {
+            return x === 0 || x === BOARD_SIZE - 1 || y === 0 || y === BOARD_SIZE - 1;
+        }
+
+        function checkWin() {
+            // 如果小猫没有有效的移动位置，玩家获胜
+            const moves = getValidMoves(catPosition.x, catPosition.y);
+            return moves.length === 0;
+        }
+
+        // 初始化游戏
+        initGame();
+    </script>
+</body>
+</html>
