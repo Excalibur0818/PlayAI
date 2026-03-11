@@ -54,22 +54,54 @@
             background: linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
             min-height: 100vh;
         }
+        .game-board-shell {
+            background:
+                radial-gradient(circle at top, rgba(0, 113, 227, 0.12), transparent 42%),
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
+        }
+        .hex-row {
+            display: flex;
+            gap: 0.45rem;
+            margin-top: -0.42rem;
+        }
+        .hex-row:first-child {
+            margin-top: 0;
+        }
+        .hex-row.offset {
+            margin-left: 1.45rem;
+        }
         .game-cell {
+            width: 2.7rem;
+            height: 2.7rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 10px 18px rgba(17, 24, 39, 0.08);
             transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .game-cell:hover:not(.occupied):not(.cat) {
-            transform: scale(1.05);
-            background: rgba(0, 113, 227, 0.1);
+            transform: translateY(-1px) scale(1.04);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.95),
+                0 12px 22px rgba(0, 113, 227, 0.16);
         }
         .cat-icon {
             animation: catBounce 1s ease-in-out infinite;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.18));
         }
         @keyframes catBounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); }
         }
         .wall {
-            background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+            background: radial-gradient(circle at 30% 30%, #4b4b4f 0%, #1d1d1f 70%);
+        }
+        .board-edge {
+            background: radial-gradient(circle at 30% 30%, #eff7ff 0%, #d7e9ff 72%);
+        }
+        .board-empty {
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #eff0f6 72%);
         }
         .win-glow {
             box-shadow: 0 0 60px rgba(34, 197, 94, 0.4);
@@ -77,10 +109,32 @@
         .lose-glow {
             box-shadow: 0 0 60px rgba(239, 68, 68, 0.4);
         }
+        .difficulty-chip {
+            transition: all 0.2s ease;
+        }
+        .difficulty-chip:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+        }
+        .stats-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 247, 0.9));
+        }
+        .stats-card.active {
+            border-color: rgba(0, 113, 227, 0.25);
+            box-shadow: 0 14px 32px rgba(0, 113, 227, 0.1);
+        }
+        @media (max-width: 640px) {
+            .hex-row.offset {
+                margin-left: 1.15rem;
+            }
+            .game-cell {
+                width: 2.3rem;
+                height: 2.3rem;
+            }
+        }
     </style>
 </head>
 <body class="font-sans text-apple-dark">
-    <!-- 导航 -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -96,37 +150,64 @@
     </nav>
 
     <main class="pt-28 pb-12 px-4">
-        <div class="max-w-lg mx-auto">
-            <!-- 标题 -->
+        <div class="max-w-xl mx-auto">
             <div class="text-center mb-8 animate-fade-in-up">
                 <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 mb-4">
                     <i class="fas fa-paw text-apple-blue"></i>
                     <span class="text-sm font-medium">益智游戏</span>
                 </div>
                 <h1 class="text-3xl font-semibold mb-2">围住小猫</h1>
-                <p class="text-apple-text text-sm">点击空格放置障碍物，把会主动找最短出路的小猫困在棋盘里！</p>
+                <p class="text-apple-text text-sm">蜂窝圆点版更接近原作视觉，小猫还会故意摆出诱导走位，专门骗你下错那一堵墙。</p>
             </div>
 
-            <!-- 游戏状态 -->
-            <div class="flex justify-between items-center mb-6 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 animate-fade-in-up">
-                <div class="text-center">
-                    <p class="text-xs text-apple-text mb-1">步数</p>
-                    <p id="stepCount" class="text-2xl font-semibold">0</p>
+            <div class="mb-6 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 animate-fade-in-up space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div class="text-center">
+                        <p class="text-xs text-apple-text mb-1">步数</p>
+                        <p id="stepCount" class="text-2xl font-semibold">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-apple-text mb-1">状态</p>
+                        <p id="gameStatus" class="text-sm font-medium text-apple-blue">进行中</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-apple-text mb-1">难度</p>
+                        <p id="difficultyLabel" class="text-sm font-medium text-apple-dark">普通</p>
+                    </div>
+                    <button onclick="initGame()" class="px-4 py-2 bg-apple-dark text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-redo mr-1"></i>重置
+                    </button>
                 </div>
-                <div class="text-center">
-                    <p class="text-xs text-apple-text mb-1">状态</p>
-                    <p id="gameStatus" class="text-sm font-medium text-apple-blue">进行中</p>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs uppercase tracking-[0.24em] text-apple-text">猫猫脑回路</span>
+                    <button type="button" class="difficulty-chip px-3 py-2 rounded-full text-sm font-medium border border-gray-200 bg-gray-50 text-apple-dark" data-difficulty="normal">普通</button>
+                    <button type="button" class="difficulty-chip px-3 py-2 rounded-full text-sm font-medium border border-gray-200 bg-gray-50 text-apple-dark" data-difficulty="cunning">狡猾</button>
+                    <button type="button" class="difficulty-chip px-3 py-2 rounded-full text-sm font-medium border border-gray-200 bg-gray-50 text-apple-dark" data-difficulty="trickster">老六</button>
+                    <span id="difficultyHint" class="text-xs text-apple-text ml-auto">会找最近出口，但偶尔还算讲理。</span>
                 </div>
-                <button onclick="initGame()" class="px-4 py-2 bg-apple-dark text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
-                    <i class="fas fa-redo mr-1"></i>重置
-                </button>
+                <div class="grid sm:grid-cols-2 gap-3">
+                    <div class="stats-card rounded-2xl border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-xs uppercase tracking-[0.22em] text-apple-text">本地战绩</p>
+                            <i class="fas fa-chart-line text-apple-blue text-sm"></i>
+                        </div>
+                        <div id="statsOverview" class="grid grid-cols-3 gap-3">
+                        </div>
+                    </div>
+                    <div class="stats-card rounded-2xl border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-xs uppercase tracking-[0.22em] text-apple-text">难度纪录</p>
+                            <i class="fas fa-trophy text-amber-500 text-sm"></i>
+                        </div>
+                        <div id="statsGrid" class="grid grid-cols-3 gap-2 text-center">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- 游戏棋盘 -->
-            <div id="gameBoard" class="bg-white rounded-3xl p-4 shadow-lg border border-gray-100 mx-auto animate-fade-in-up" style="width: fit-content;">
+            <div id="gameBoard" class="game-board-shell rounded-3xl p-4 sm:p-5 shadow-lg border border-gray-100 mx-auto animate-fade-in-up" style="width: fit-content;">
             </div>
 
-            <!-- 说明 -->
             <div class="mt-8 bg-white/50 rounded-2xl p-5 border border-gray-100 animate-fade-in-up">
                 <h3 class="font-semibold mb-3 flex items-center gap-2">
                     <i class="fas fa-info-circle text-apple-blue"></i>
@@ -135,19 +216,19 @@
                 <ul class="text-sm text-apple-text space-y-2">
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check text-green-500 mt-1"></i>
-                        <span>点击空格放置障碍物（墙壁）</span>
+                        <span>点击圆形蜂窝空格放置障碍物，视觉和节奏都更接近原作</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check text-green-500 mt-1"></i>
-                        <span>每放置一个障碍物，小猫会智能评估路线并移动一步</span>
+                        <span>每放置一个障碍物，小猫会先看眼前，再预判你下一堵墙后的局面</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check text-green-500 mt-1"></i>
-                        <span>如果小猫到达边界，玩家输掉游戏</span>
+                        <span>老六模式会故意站在你最想封却又很难真正封死的位置，专门诱导你失误</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-check text-green-500 mt-1"></i>
-                        <span>把小猫困住让它无法移动，即可获胜</span>
+                        <span>页面会自动记录本地胜率和各难度最佳步数，能直观看出难度差异</span>
                     </li>
                 </ul>
             </div>
@@ -155,33 +236,269 @@
     </main>
 
     <script>
-        const BOARD_SIZE = 10;
-        const OBSTACLE_COUNT = 8;
-        const DIRECTIONS = [
-            { dx: 0, dy: -1 },
-            { dx: 0, dy: 1 },
-            { dx: -1, dy: 0 },
-            { dx: 1, dy: 0 }
-        ];
+        const BOARD_SIZE = 11;
+        const STATS_STORAGE_KEY = 'playai_catch_cat_stats';
+        const DIFFICULTY_SETTINGS = {
+            normal: {
+                label: '普通',
+                hint: '会找最近出口，但偶尔还算讲理。',
+                wallForecastCount: 3,
+                lookaheadDepth: 2,
+                tieWindow: 45,
+                tieRandomness: 0.28,
+                initialObstacles: 10,
+                trapPenalty: 0.9,
+                threatWeight: 0.75
+            },
+            cunning: {
+                label: '狡猾',
+                hint: '会绕开你最想堵的点，开始像真猫了。',
+                wallForecastCount: 5,
+                lookaheadDepth: 2,
+                tieWindow: 24,
+                tieRandomness: 0.14,
+                initialObstacles: 9,
+                trapPenalty: 1.1,
+                threatWeight: 1
+            },
+            trickster: {
+                label: '老六',
+                hint: '不只会逃，还会故意站在你最想封却最难封死的蜂窝口。',
+                wallForecastCount: 7,
+                lookaheadDepth: 2,
+                tieWindow: 10,
+                tieRandomness: 0.04,
+                initialObstacles: 8,
+                trapPenalty: 1.3,
+                threatWeight: 1.25,
+                baitWeight: 1.3
+            }
+        };
+
         let board = [];
         let catPosition = { x: 0, y: 0 };
         let stepCount = 0;
         let gameOver = false;
+        let currentDifficulty = 'normal';
+        let gameRecorded = false;
+        let gameStats = createEmptyStats();
+
+        function createEmptyStats() {
+            return {
+                totalGames: 0,
+                wins: 0,
+                losses: 0,
+                byDifficulty: {
+                    normal: { games: 0, wins: 0, bestSteps: null },
+                    cunning: { games: 0, wins: 0, bestSteps: null },
+                    trickster: { games: 0, wins: 0, bestSteps: null }
+                }
+            };
+        }
+
+        function loadStats() {
+            try {
+                const saved = localStorage.getItem(STATS_STORAGE_KEY);
+                if (!saved) {
+                    return createEmptyStats();
+                }
+
+                const parsed = JSON.parse(saved);
+                const empty = createEmptyStats();
+                return {
+                    totalGames: parsed.totalGames || 0,
+                    wins: parsed.wins || 0,
+                    losses: parsed.losses || 0,
+                    byDifficulty: {
+                        normal: { ...empty.byDifficulty.normal, ...(parsed.byDifficulty?.normal || {}) },
+                        cunning: { ...empty.byDifficulty.cunning, ...(parsed.byDifficulty?.cunning || {}) },
+                        trickster: { ...empty.byDifficulty.trickster, ...(parsed.byDifficulty?.trickster || {}) }
+                    }
+                };
+            } catch (error) {
+                return createEmptyStats();
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(gameStats));
+        }
+
+        function getWinRate(wins, games) {
+            return games === 0 ? '0%' : `${Math.round((wins / games) * 100)}%`;
+        }
+
+        function getDifficultyConfig() {
+            return DIFFICULTY_SETTINGS[currentDifficulty];
+        }
+
+        function getHexDirections(row) {
+            if (row % 2 === 0) {
+                return [
+                    { dx: -1, dy: -1 },
+                    { dx: 0, dy: -1 },
+                    { dx: -1, dy: 0 },
+                    { dx: 1, dy: 0 },
+                    { dx: -1, dy: 1 },
+                    { dx: 0, dy: 1 }
+                ];
+            }
+
+            return [
+                { dx: 0, dy: -1 },
+                { dx: 1, dy: -1 },
+                { dx: -1, dy: 0 },
+                { dx: 1, dy: 0 },
+                { dx: 0, dy: 1 },
+                { dx: 1, dy: 1 }
+            ];
+        }
+
+        function getNeighbors(x, y) {
+            return getHexDirections(y)
+                .map((direction) => ({ x: x + direction.dx, y: y + direction.dy }))
+                .filter((position) => (
+                    position.x >= 0 &&
+                    position.x < BOARD_SIZE &&
+                    position.y >= 0 &&
+                    position.y < BOARD_SIZE
+                ));
+        }
+
+        function getValidMoves(x, y) {
+            return getNeighbors(x, y).filter((position) => board[position.y][position.x] === 0);
+        }
+
+        function isAtEdge(x, y) {
+            return x === 0 || x === BOARD_SIZE - 1 || y === 0 || y === BOARD_SIZE - 1;
+        }
+
+        function getBoardSnapshot() {
+            return board.map((row) => [...row]);
+        }
+
+        function restoreBoard(snapshot) {
+            board = snapshot.map((row) => [...row]);
+        }
+
+        function getHexDistance(ax, ay, bx, by) {
+            const aCol = ax - (ay - (ay & 1)) / 2;
+            const aZ = ay;
+            const aY = -aCol - aZ;
+            const bCol = bx - (by - (by & 1)) / 2;
+            const bZ = by;
+            const bY = -bCol - bZ;
+
+            return Math.max(
+                Math.abs(aCol - bCol),
+                Math.abs(aY - bY),
+                Math.abs(aZ - bZ)
+            );
+        }
+
+        function updateDifficultyUI() {
+            const config = getDifficultyConfig();
+            document.getElementById('difficultyLabel').textContent = config.label;
+            document.getElementById('difficultyHint').textContent = config.hint;
+
+            document.querySelectorAll('[data-difficulty]').forEach((button) => {
+                const isActive = button.dataset.difficulty === currentDifficulty;
+                button.className = `difficulty-chip px-3 py-2 rounded-full text-sm font-medium border transition-colors ${
+                    isActive
+                        ? 'border-apple-blue bg-apple-blue text-white shadow-sm'
+                        : 'border-gray-200 bg-gray-50 text-apple-dark hover:bg-gray-100'
+                }`;
+            });
+        }
+
+        function renderStats() {
+            const overviewEl = document.getElementById('statsOverview');
+            const statsGridEl = document.getElementById('statsGrid');
+            const overallWinRate = getWinRate(gameStats.wins, gameStats.totalGames);
+
+            overviewEl.innerHTML = `
+                <div>
+                    <p class="text-[11px] text-apple-text mb-1">总局数</p>
+                    <p class="text-xl font-semibold">${gameStats.totalGames}</p>
+                </div>
+                <div>
+                    <p class="text-[11px] text-apple-text mb-1">胜率</p>
+                    <p class="text-xl font-semibold">${overallWinRate}</p>
+                </div>
+                <div>
+                    <p class="text-[11px] text-apple-text mb-1">最佳纪录</p>
+                    <p class="text-xl font-semibold">${getBestRecordSummary()}</p>
+                </div>
+            `;
+
+            statsGridEl.innerHTML = Object.entries(DIFFICULTY_SETTINGS).map(([key, config]) => {
+                const stats = gameStats.byDifficulty[key];
+                const best = stats.bestSteps === null ? '--' : `${stats.bestSteps}步`;
+                const rate = getWinRate(stats.wins, stats.games);
+                const activeClass = key === currentDifficulty ? 'active' : '';
+
+                return `
+                    <div class="stats-card ${activeClass} rounded-2xl border border-gray-100 px-3 py-3">
+                        <p class="text-xs font-semibold mb-1">${config.label}</p>
+                        <p class="text-[11px] text-apple-text">${rate}</p>
+                        <p class="text-[11px] text-apple-text mt-1">${stats.games}局</p>
+                        <p class="text-sm font-semibold mt-2">${best}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getBestRecordSummary() {
+            const bestValues = Object.values(gameStats.byDifficulty)
+                .map((stats) => stats.bestSteps)
+                .filter((value) => value !== null);
+
+            if (bestValues.length === 0) {
+                return '--';
+            }
+
+            return `${Math.min(...bestValues)}步`;
+        }
+
+        function recordGameResult(didWin) {
+            if (gameRecorded) {
+                return;
+            }
+
+            gameRecorded = true;
+            gameStats.totalGames += 1;
+            if (didWin) {
+                gameStats.wins += 1;
+            } else {
+                gameStats.losses += 1;
+            }
+
+            const difficultyStats = gameStats.byDifficulty[currentDifficulty];
+            difficultyStats.games += 1;
+            if (didWin) {
+                difficultyStats.wins += 1;
+                if (difficultyStats.bestSteps === null || stepCount < difficultyStats.bestSteps) {
+                    difficultyStats.bestSteps = stepCount;
+                }
+            }
+
+            saveStats();
+        }
 
         function initGame() {
             board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
             stepCount = 0;
             gameOver = false;
+            gameRecorded = false;
 
-            // 随机放置小猫在中心区域
             catPosition = {
                 x: Math.floor(BOARD_SIZE / 2),
                 y: Math.floor(BOARD_SIZE / 2)
             };
 
-            // 随机放置障碍物
             let placed = 0;
-            while (placed < OBSTACLE_COUNT) {
+            const obstacleCount = getDifficultyConfig().initialObstacles;
+            while (placed < obstacleCount) {
                 const x = Math.floor(Math.random() * BOARD_SIZE);
                 const y = Math.floor(Math.random() * BOARD_SIZE);
                 if (board[y][x] === 0 && (x !== catPosition.x || y !== catPosition.y)) {
@@ -194,6 +511,8 @@
         }
 
         function updateUI() {
+            updateDifficultyUI();
+            renderStats();
             document.getElementById('stepCount').textContent = stepCount;
             document.getElementById('gameStatus').textContent = gameOver
                 ? (checkWin() ? '胜利！🎉' : '失败😢')
@@ -211,34 +530,32 @@
 
             for (let y = 0; y < BOARD_SIZE; y++) {
                 const row = document.createElement('div');
-                row.className = 'flex gap-1';
+                row.className = `hex-row ${y % 2 === 1 ? 'offset' : ''}`;
 
                 for (let x = 0; x < BOARD_SIZE; x++) {
                     const cell = document.createElement('div');
                     const isCat = x === catPosition.x && y === catPosition.y;
                     const isWall = board[y][x] === 1;
-                    const isEdge = x === 0 || x === BOARD_SIZE - 1 || y === 0 || y === BOARD_SIZE - 1;
+                    const isEdge = isAtEdge(x, y);
 
-                    cell.className = `game-cell w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center cursor-pointer text-lg ${
+                    cell.className = `game-cell flex items-center justify-center cursor-pointer text-lg ${
                         isCat ? 'cat bg-yellow-100' :
                         isWall ? 'wall' :
-                        isEdge ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'
+                        isEdge ? 'board-edge' : 'board-empty'
                     } ${isCat ? 'cat' : ''} ${isWall ? 'occupied' : ''}`;
 
                     if (isCat) {
                         cell.innerHTML = '<i class="fas fa-cat cat-icon text-2xl"></i>';
-                    } else if (isWall) {
-                        cell.innerHTML = '';
-                    } else {
+                    } else if (!isWall) {
                         cell.onclick = () => handleCellClick(x, y);
                     }
 
                     row.appendChild(cell);
                 }
+
                 boardEl.appendChild(row);
             }
 
-            // 游戏结束显示结果
             if (gameOver) {
                 if (checkWin()) {
                     boardEl.classList.add('win-glow');
@@ -253,68 +570,35 @@
         }
 
         function handleCellClick(x, y) {
-            if (gameOver || board[y][x] !== 0) return;
+            if (gameOver || board[y][x] !== 0) {
+                return;
+            }
 
-            // 放置障碍物
             board[y][x] = 1;
             stepCount++;
 
-            // 检查是否立即获胜（堵住小猫）
             if (checkWin()) {
                 gameOver = true;
+                recordGameResult(true);
                 updateUI();
                 return;
             }
 
-            // 小猫移动
             moveCat();
 
-            // 检查小猫是否到达边界（玩家失败）
             if (isAtEdge(catPosition.x, catPosition.y)) {
                 gameOver = true;
+                recordGameResult(false);
                 updateUI();
                 return;
             }
 
-            // 检查是否获胜（困住小猫）
             if (checkWin()) {
                 gameOver = true;
+                recordGameResult(true);
             }
 
             updateUI();
-        }
-
-        function moveCat() {
-            const moves = getValidMoves(catPosition.x, catPosition.y);
-            if (moves.length === 0) return;
-
-            const evaluatedMoves = moves.map((move) => ({
-                move,
-                score: evaluateMove(move.x, move.y)
-            }));
-
-            evaluatedMoves.sort((left, right) => right.score - left.score);
-
-            const bestScore = evaluatedMoves[0].score;
-            const nearBestMoves = evaluatedMoves.filter((item) => item.score >= bestScore - 30);
-            const selectedMove = nearBestMoves[Math.floor(Math.random() * nearBestMoves.length)];
-
-            catPosition = selectedMove.move;
-        }
-
-        function getNeighbors(x, y) {
-            return DIRECTIONS
-                .map((direction) => ({ x: x + direction.dx, y: y + direction.dy }))
-                .filter((position) => (
-                    position.x >= 0 &&
-                    position.x < BOARD_SIZE &&
-                    position.y >= 0 &&
-                    position.y < BOARD_SIZE
-                ));
-        }
-
-        function getValidMoves(x, y) {
-            return getNeighbors(x, y).filter((position) => board[position.y][position.x] === 0);
         }
 
         function getReachabilityMetrics(startX, startY) {
@@ -356,15 +640,51 @@
             };
         }
 
+        function getEscapeRoutes(startX, startY) {
+            const visited = new Set();
+            const queue = [{ x: startX, y: startY, dist: 0 }];
+            let head = 0;
+            let shortestDistance = Infinity;
+            let routeCount = 0;
+
+            visited.add(`${startX},${startY}`);
+
+            while (head < queue.length) {
+                const current = queue[head++];
+                if (current.dist > shortestDistance) {
+                    continue;
+                }
+
+                if (isAtEdge(current.x, current.y)) {
+                    shortestDistance = current.dist;
+                    routeCount++;
+                    continue;
+                }
+
+                for (const next of getNeighbors(current.x, current.y)) {
+                    const key = `${next.x},${next.y}`;
+                    if (board[next.y][next.x] !== 0 || visited.has(key)) {
+                        continue;
+                    }
+
+                    visited.add(key);
+                    queue.push({ x: next.x, y: next.y, dist: current.dist + 1 });
+                }
+            }
+
+            return {
+                shortestDistance: Number.isFinite(shortestDistance) ? shortestDistance : null,
+                routeCount
+            };
+        }
+
         function countAdjacentWalls(x, y) {
             let wallCount = 0;
-
             for (const neighbor of getNeighbors(x, y)) {
                 if (board[neighbor.y][neighbor.x] === 1) {
                     wallCount++;
                 }
             }
-
             return wallCount;
         }
 
@@ -374,71 +694,237 @@
 
         function estimateFutureSafety(x, y) {
             const followUpMoves = getValidMoves(x, y);
-
             if (followUpMoves.length === 0) {
-                return -500;
+                return -800;
             }
 
             let bestFollowUpScore = -Infinity;
 
             for (const move of followUpMoves) {
                 const reachability = getReachabilityMetrics(move.x, move.y);
+                const routes = getEscapeRoutes(move.x, move.y);
                 const mobility = getValidMoves(move.x, move.y).length;
 
-                let score = reachability.area * 4 + mobility * 28;
-
-                if (reachability.shortestEdgeDistance !== null) {
-                    score += 260 - reachability.shortestEdgeDistance * 35;
-                    score += reachability.edgeCells * 12;
+                let score = reachability.area * 5 + mobility * 32 + routes.routeCount * 24;
+                if (routes.shortestDistance !== null) {
+                    score += 320 - routes.shortestDistance * 42;
                 } else {
-                    score -= 80;
+                    score -= 140;
                 }
 
-                score -= countAdjacentWalls(move.x, move.y) * 45;
+                score -= countAdjacentWalls(move.x, move.y) * 55;
                 bestFollowUpScore = Math.max(bestFollowUpScore, score);
             }
 
             return bestFollowUpScore;
         }
 
-        function evaluateMove(x, y) {
+        function getCandidateWalls(maxCount, fromPosition) {
+            const candidates = [];
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let column = 0; column < BOARD_SIZE; column++) {
+                    if (board[row][column] !== 0 || (column === fromPosition.x && row === fromPosition.y)) {
+                        continue;
+                    }
+
+                    const distance = getHexDistance(column, row, fromPosition.x, fromPosition.y);
+                    if (distance > 3) {
+                        continue;
+                    }
+
+                    const adjacencyToCat = getNeighbors(fromPosition.x, fromPosition.y)
+                        .some((neighbor) => neighbor.x === column && neighbor.y === row);
+                    const edgeBias = isAtEdge(column, row) ? 40 : 0;
+                    const centralityPenalty = distance * 12;
+
+                    candidates.push({
+                        x: column,
+                        y: row,
+                        priority: (adjacencyToCat ? 180 : 0) + edgeBias - centralityPenalty
+                    });
+                }
+            }
+
+            candidates.sort((left, right) => right.priority - left.priority);
+            return candidates.slice(0, maxCount);
+        }
+
+        function getBaitScore(x, y, config) {
+            if (currentDifficulty !== 'trickster') {
+                return 0;
+            }
+
+            const candidateWalls = getCandidateWalls(4, { x, y });
+            if (candidateWalls.length === 0) {
+                return 0;
+            }
+
+            let baitScore = 0;
+
+            for (const candidate of candidateWalls) {
+                const snapshot = getBoardSnapshot();
+                board[candidate.y][candidate.x] = 1;
+
+                const responseMoves = getValidMoves(x, y);
+                const routesAfterWall = getEscapeRoutes(x, y);
+                const stillEscapable = routesAfterWall.shortestDistance !== null;
+                const responseBonus = responseMoves.length >= 2 ? 130 : 0;
+                const routeBonus = stillEscapable ? routesAfterWall.routeCount * 42 : -160;
+                const lureBonus = getHexDistance(candidate.x, candidate.y, x, y) === 1 ? 68 : 28;
+
+                baitScore = Math.max(baitScore, responseBonus + routeBonus + lureBonus);
+                restoreBoard(snapshot);
+            }
+
+            const nearbyWalls = countAdjacentWalls(x, y);
+            const pressureBonus = nearbyWalls >= 2 && nearbyWalls <= 3 ? 110 : 0;
+            const mobility = getValidMoves(x, y).length;
+            const mobilityBonus = mobility >= 2 && mobility <= 4 ? 90 : 0;
+
+            return (baitScore + pressureBonus + mobilityBonus) * (config.baitWeight || 1);
+        }
+
+        function scoreBoardForCat(x, y, config) {
             if (isAtEdge(x, y)) {
                 return Number.MAX_SAFE_INTEGER;
             }
 
             const reachability = getReachabilityMetrics(x, y);
+            const routes = getEscapeRoutes(x, y);
             const mobility = getValidMoves(x, y).length;
             const nearbyWalls = countAdjacentWalls(x, y);
             const futureSafety = estimateFutureSafety(x, y);
             const edgeDistance = distanceToClosestEdge(x, y);
+            const baitScore = getBaitScore(x, y, config);
 
-            let score = reachability.area * 14;
-            score += mobility * 90;
+            let score = reachability.area * 16;
+            score += mobility * 94;
             score += futureSafety;
-            score -= nearbyWalls * 120;
-            score -= edgeDistance * 10;
+            score -= nearbyWalls * 128 * config.trapPenalty;
+            score -= edgeDistance * 12;
+
+            if (routes.shortestDistance !== null) {
+                score += 4600 - routes.shortestDistance * 280;
+                score += routes.routeCount * 90;
+            } else {
+                score -= 1800;
+            }
 
             if (reachability.shortestEdgeDistance !== null) {
-                score += 4000 - reachability.shortestEdgeDistance * 260;
-                score += reachability.edgeCells * 60;
+                score += 2200 - reachability.shortestEdgeDistance * 120;
+                score += reachability.edgeCells * 55;
             } else {
-                score -= 1400;
+                score -= 950;
+            }
+
+            score += baitScore;
+
+            return score;
+        }
+
+        function forecastPlayerWall(move, config) {
+            const snapshot = getBoardSnapshot();
+            const originalCat = { ...catPosition };
+            catPosition = { ...move };
+
+            const candidateWalls = getCandidateWalls(config.wallForecastCount, move);
+            let bestWall = null;
+            let strongestThreat = -Infinity;
+
+            for (const candidate of candidateWalls) {
+                board[candidate.y][candidate.x] = 1;
+                const threat = -scoreBoardForCat(move.x, move.y, config);
+                board[candidate.y][candidate.x] = 0;
+
+                if (threat > strongestThreat) {
+                    strongestThreat = threat;
+                    bestWall = candidate;
+                }
+            }
+
+            restoreBoard(snapshot);
+            catPosition = originalCat;
+
+            return {
+                wall: bestWall,
+                threat: strongestThreat > -Infinity ? strongestThreat : 0
+            };
+        }
+
+        function evaluateMove(x, y, lookaheadDepth) {
+            const config = getDifficultyConfig();
+            let score = scoreBoardForCat(x, y, config);
+
+            if (lookaheadDepth > 0) {
+                const forecast = forecastPlayerWall({ x, y }, config);
+                score -= forecast.threat * 0.55 * config.threatWeight;
+
+                if (lookaheadDepth > 1 && forecast.wall) {
+                    const snapshot = getBoardSnapshot();
+                    const originalCat = { ...catPosition };
+
+                    catPosition = { x, y };
+                    board[forecast.wall.y][forecast.wall.x] = 1;
+
+                    const responseMoves = getValidMoves(x, y);
+                    if (responseMoves.length === 0) {
+                        score -= 2800;
+                    } else {
+                        let bestResponse = -Infinity;
+                        for (const response of responseMoves) {
+                            bestResponse = Math.max(bestResponse, scoreBoardForCat(response.x, response.y, config));
+                        }
+                        score += bestResponse * 0.72;
+                    }
+
+                    restoreBoard(snapshot);
+                    catPosition = originalCat;
+                }
             }
 
             return score;
         }
 
-        function isAtEdge(x, y) {
-            return x === 0 || x === BOARD_SIZE - 1 || y === 0 || y === BOARD_SIZE - 1;
+        function moveCat() {
+            const config = getDifficultyConfig();
+            const moves = getValidMoves(catPosition.x, catPosition.y);
+            if (moves.length === 0) {
+                return;
+            }
+
+            const evaluatedMoves = moves.map((move) => ({
+                move,
+                score: evaluateMove(move.x, move.y, config.lookaheadDepth)
+            }));
+
+            evaluatedMoves.sort((left, right) => right.score - left.score);
+
+            const bestScore = evaluatedMoves[0].score;
+            const nearBestMoves = evaluatedMoves.filter((item) => item.score >= bestScore - config.tieWindow);
+            const choicePool = Math.random() < config.tieRandomness ? nearBestMoves : [nearBestMoves[0]];
+            const selectedMove = choicePool[Math.floor(Math.random() * choicePool.length)];
+
+            catPosition = selectedMove.move;
         }
 
         function checkWin() {
-            // 如果小猫没有有效的移动位置，玩家获胜
-            const moves = getValidMoves(catPosition.x, catPosition.y);
-            return moves.length === 0;
+            return getValidMoves(catPosition.x, catPosition.y).length === 0;
         }
 
-        // 初始化游戏
+        gameStats = loadStats();
+
+        document.querySelectorAll('[data-difficulty]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const nextDifficulty = button.dataset.difficulty;
+                if (!nextDifficulty || nextDifficulty === currentDifficulty) {
+                    return;
+                }
+
+                currentDifficulty = nextDifficulty;
+                initGame();
+            });
+        });
+
         initGame();
     </script>
 </body>

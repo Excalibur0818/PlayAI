@@ -1,12 +1,21 @@
 # PlayAI
 
-在线预览：[https://excalibur0818.github.io/PlayAI](https://excalibur0818.github.io/PlayAI)
+一个聚合多种 AI 工具的工具箱，当前正在从原生 HTML 多页站点迁移到 Next.js App Router，并继续保持现有的 Apple 黑白商务风格。
 
-一个聚合多种 AI 工具的个人工具箱，采用简洁的 Apple 黑白商务风格设计。
+在线预览旧版静态站点：[https://excalibur0818.github.io/PlayAI](https://excalibur0818.github.io/PlayAI)
 
 ![PlayAI](https://img.shields.io/badge/PlayAI-Tools-blue)
-![Pure Frontend](https://img.shields.io/badge/Pure-Frontend-orange)
+![Next.js](https://img.shields.io/badge/Next.js-App_Router-black)
 ![Apple Style](https://img.shields.io/badge/Style-Apple-gray)
+
+---
+
+## 当前迁移状态
+
+- 已建立 Next.js App Router、TypeScript、Tailwind CSS 基础骨架
+- 已迁移共享布局、首页、错误页、围住小猫和两个 API 路由
+- AI 早报、在线翻译、海龟汤已挂上新路由，完整交互逻辑将在下一批迁移中继续平移
+- docs/ 知识库暂不纳入首轮迁移，以避免阻塞主站切换
 
 ---
 
@@ -38,20 +47,28 @@
 
 ## 快速开始
 
-### 本地预览
+### 本地开发
 
 ```bash
 # 克隆仓库
 git clone https://github.com/Excalibur0818/PlayAI.git
 cd PlayAI
 
-# 用任意静态服务器预览
-npx serve .
-# 或
-python -m http.server 8080
+# 安装依赖
+npm install
+
+# 启动 Next.js 开发服务器
+npm run dev
 ```
 
-访问 `http://localhost:8080`
+访问 `http://localhost:3000`
+
+### 生产构建
+
+```bash
+npm run build
+npm run start
+```
 
 ### GitHub Pages 部署
 
@@ -64,11 +81,12 @@ python -m http.server 8080
 
 ## 技术栈
 
-- **前端**: 原生 HTML5 + Tailwind CSS
-- **图标**: Font Awesome
+- **前端框架**: Next.js App Router + React + TypeScript
+- **样式**: Tailwind CSS
+- **图标**: lucide-react
 - **样式**: Apple 黑白商务风格
-- **字体**: Inter
-- **托管**: GitHub Pages
+- **字体**: DM Sans + Playfair Display
+- **托管**: Vercel
 
 ---
 
@@ -76,10 +94,11 @@ python -m http.server 8080
 
 ```
 PlayAI/
-├── index.html              # 工具箱首页
-├── ai-news.html            # AI 资讯聚合
-├── turtle-soup.html        # 海龟汤生成器
-├── main.js                 # 公共逻辑
+├── app/                    # Next.js App Router
+├── components/             # 共享组件与客户端逻辑
+├── lib/                    # 共享数据和工具函数
+├── api/                    # 原有 Vercel Serverless 参考实现
+├── *.html                  # 旧版静态页面，当前保留作迁移参考
 ├── README.md               # 本文档
 └── LICENSE                 # MIT 协议
 ```
@@ -88,33 +107,18 @@ PlayAI/
 
 ## 配置说明
 
-### AI 早报 RSS 源配置
+### API 路由
 
-在 `ai-news.html` 中修改 `RSS_SOURCES`：
-
-```javascript
-const RSS_SOURCES = {
-    jiqizhixin: {
-        name: '机器之心',
-        url: 'https://www.jiqizhixin.com/rss',
-        category: 'tech'
-    },
-    openai: {
-        name: 'OpenAI',
-        url: 'https://openai.com/blog/rss.xml',
-        category: 'tech'
-    }
-    // 添加更多源...
-};
-```
+- RSS 代理：`/api/rss-proxy?url=https://example.com/feed`
+- 百度翻译代理：`/api/translate`
 
 ---
 
 ## 注意事项
 
-1. **纯前端项目** - 所有功能均在浏览器端运行，无需后端服务
-2. **RSS 代理** - 使用 Vercel Serverless Function 代理，无调用限制
-3. **图片加载** - 部分网站图片有防盗链限制，可能显示默认图
+1. 旧版 HTML 文件当前仍保留在仓库中，方便逐页对照迁移，但新开发应基于 Next.js 目录结构进行。
+2. 首轮迁移目标是界面与结构稳定，不是一次性重写所有工具逻辑。
+3. docs/ 知识库暂未纳入 Next.js 主站路由，后续会单独决定保留静态方案还是迁到 MDX。
 
 ---
 
