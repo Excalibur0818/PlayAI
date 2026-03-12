@@ -5,6 +5,7 @@ import {
   Languages,
   Newspaper,
   UtensilsCrossed,
+  Target,
   Brain,
   Shield,
   Zap,
@@ -49,6 +50,14 @@ export const tools: Array<{
     badge: "AI",
     gradient: "from-emerald-600 to-emerald-800",
     icon: <UtensilsCrossed className="h-9 w-9 text-white" />,
+  },
+  {
+    href: "/gomoku",
+    title: "五子棋",
+    description: "经典策略对弈游戏。支持人机三种难度与双人对战，先连五子者胜。",
+    badge: "游戏",
+    gradient: "from-indigo-600 to-indigo-800",
+    icon: <Target className="h-9 w-9 text-white" />,
   },
 ];
 
