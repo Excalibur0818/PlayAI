@@ -17,8 +17,8 @@ import {
    ═══════════════════════════════════════════════════════ */
 
 const SIZE = 15;
-const CELL = 34;
-const PAD = 24;
+const CELL = 56;
+const PAD = 36;
 const BOARD_PX = PAD * 2 + (SIZE - 1) * CELL;
 const STONE_R = CELL * 0.43;
 const STATS_KEY = "playai_gomoku_stats";
@@ -550,7 +550,7 @@ export function GomokuGame() {
     : "";
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto w-full max-w-full px-1 sm:px-2">
       <style jsx>{`
         .gomoku-board-bg {
           background:
@@ -730,82 +730,13 @@ export function GomokuGame() {
             </span>
           </div>
         )}
-
-        {/* 战绩（仅人机） */}
-        {mode === "pve" && (
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-gray-100 bg-gradient-to-b from-white to-gray-50/80 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.22em] text-apple-text">
-                  战绩总览
-                </p>
-                <ChartLine className="h-4 w-4 text-apple-blue" />
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <p className="mb-1 text-[11px] text-apple-text">总局数</p>
-                  <p className="text-xl font-semibold">{stats.total}</p>
-                </div>
-                <div>
-                  <p className="mb-1 text-[11px] text-apple-text">胜率</p>
-                  <p className="text-xl font-semibold">
-                    {pct(stats.wins, stats.total)}
-                  </p>
-                </div>
-                <div>
-                  <p className="mb-1 text-[11px] text-apple-text">胜/负/平</p>
-                  <p className="text-lg font-semibold">
-                    {stats.wins}/{stats.losses}/{stats.draws}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-gray-100 bg-gradient-to-b from-white to-gray-50/80 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.22em] text-apple-text">
-                  分难度
-                </p>
-                <Trophy className="h-4 w-4 text-amber-500" />
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {(
-                  Object.entries(DIFF_CFG) as [
-                    Difficulty,
-                    (typeof DIFF_CFG)["easy"],
-                  ][]
-                ).map(([k, cfg]) => {
-                  const d = stats.byDiff[k];
-                  return (
-                    <div
-                      key={k}
-                      className={`rounded-2xl border px-3 py-3 transition-colors ${
-                        k === diff
-                          ? "border-apple-blue/25 bg-white shadow-md"
-                          : "border-gray-100 bg-white/60"
-                      }`}
-                    >
-                      <p className="mb-1 text-xs font-semibold">{cfg.label}</p>
-                      <p className="text-[11px] text-apple-text">
-                        {pct(d.wins, d.games)}
-                      </p>
-                      <p className="mt-1 text-[11px] text-apple-text">
-                        {d.games}局
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ── 棋盘 ──────────────────────────────────── */}
       <div className="flex animate-fade-in-up justify-center">
         <div
           className={`gomoku-board-bg overflow-hidden ${ringClass}`}
-          style={{ maxWidth: BOARD_PX }}
+          style={{ width: "100%", maxWidth: BOARD_PX, aspectRatio: "1" }}
         >
           <svg
             viewBox={`0 0 ${BOARD_PX} ${BOARD_PX}`}
@@ -985,6 +916,52 @@ export function GomokuGame() {
           </span>
         </div>
       </div>
+
+      {/* ── 战绩总览 & 分难度（仅人机，紧凑布局） ───── */}
+      {mode === "pve" && (
+        <div className="mt-4 flex animate-fade-in-up flex-wrap items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white/70 px-4 py-3 text-sm">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 text-apple-text">
+              <ChartLine className="h-3.5 w-3.5" />
+              战绩
+            </span>
+            <span className="font-medium">{stats.total} 局</span>
+            <span className="text-apple-text">
+              胜率 {pct(stats.wins, stats.total)}
+            </span>
+            <span className="text-apple-text">
+              {stats.wins}/{stats.losses}/{stats.draws}
+            </span>
+          </div>
+          <span className="h-4 w-px bg-gray-200" />
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-apple-text">
+              <Trophy className="h-3.5 w-3.5" />
+              分难度
+            </span>
+            {(
+              Object.entries(DIFF_CFG) as [
+                Difficulty,
+                (typeof DIFF_CFG)["easy"],
+              ][]
+            ).map(([k, cfg]) => {
+              const d = stats.byDiff[k];
+              return (
+                <span
+                  key={k}
+                  className={`rounded-lg border px-2.5 py-1 text-xs ${
+                    k === diff
+                      ? "border-apple-blue/30 bg-apple-blue/5 font-medium"
+                      : "border-gray-100 text-apple-text"
+                  }`}
+                >
+                  {cfg.label} {pct(d.wins, d.games)} ({d.games}局)
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── 规则说明 ──────────────────────────────── */}
       <div className="mt-8 animate-fade-in-up rounded-2xl border border-gray-100 bg-white/50 p-5">

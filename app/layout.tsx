@@ -16,10 +16,10 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "PlayAI - AI 智能工具箱",
+    default: "PlayAI - 游戏合集",
     template: "%s | PlayAI",
   },
-  description: "由 AI 精心打造的实用在线工具集合，为日常工作提供智能化解决方案。",
+  description: "围住小猫、五子棋等经典游戏，在浏览器中尽情畅玩。",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

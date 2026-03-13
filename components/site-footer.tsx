@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Cpu, Github, Mail, Sparkles } from "lucide-react";
+import { Cpu, Github, Mail } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -13,16 +13,13 @@ export function SiteFooter() {
             </div>
             <div>
               <span className="text-xl font-semibold">PlayAI</span>
-              <p className="mt-1 text-xs text-gray-500">AI 智能工具箱</p>
+              <p className="mt-1 text-xs text-gray-500">策略游戏合集</p>
             </div>
           </div>
 
           <div className="flex gap-8 text-sm text-gray-400">
-            <Link href="/error?error=Info&message=Terms%20coming%20soon">使用条款</Link>
-            <Link href="/error?error=Info&message=Privacy%20coming%20soon">隐私政策</Link>
-            <span className="inline-flex items-center gap-2 text-gray-500">
-              <Sparkles className="h-4 w-4" /> 文档后续迁移
-            </span>
+            <Link href="#">使用条款</Link>
+            <Link href="#">隐私政策</Link>
           </div>
 
           <div className="flex gap-4">

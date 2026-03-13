@@ -1,47 +1,34 @@
 # PlayAI
 
-一个聚合多种 AI 工具的工具箱，当前正在从原生 HTML 多页站点迁移到 Next.js App Router，并继续保持现有的 Apple 黑白商务风格。
+围住小猫、五子棋等经典策略小游戏合集，基于 Next.js App Router 构建，继续保持 Apple 黑白商务风格。
 
-在线预览旧版静态站点：[https://excalibur0818.github.io/PlayAI](https://excalibur0818.github.io/PlayAI)
-
-![PlayAI](https://img.shields.io/badge/PlayAI-Tools-blue)
+![PlayAI](https://img.shields.io/badge/PlayAI-Games-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-App_Router-black)
 ![Apple Style](https://img.shields.io/badge/Style-Apple-gray)
 
 ---
 
-## 当前迁移状态
+## 游戏列表
 
-- 已建立 Next.js App Router、TypeScript、Tailwind CSS 基础骨架
-- 已迁移共享布局、首页、错误页、围住小猫和两个 API 路由
-- AI 早报、在线翻译、海龟汤已挂上新路由，完整交互逻辑将在下一批迁移中继续平移
-- docs/ 知识库暂不纳入首轮迁移，以避免阻塞主站切换
+### 1. 围住小猫 🐱
+**经典策略小游戏**
 
----
+- 在六边形棋盘上放置障碍物
+- 目标是把小猫困在正中央
+- 小猫会智能逃跑，考验你的策略
 
-## 工具列表
-
-### 1. AI 早报 📰
-**AI 资讯聚合页面**
-
-- 多 RSS 源动态获取（机器之心、OpenAI、Google AI 等）
-- 支持源筛选
-- RSS 地址一键复制
-- 响应式卡片布局
-
-访问：`ai-news.html`
+访问：`/catch-the-cat`
 
 ---
 
-### 2. 海龟汤生成器 🐢
-**推理游戏题目生成工具**
+### 2. 五子棋 ⚫
+**经典策略对弈游戏**
 
-- 智能生成海龟汤推理题目
-- 支持自定义题目难度和类型（清汤/红汤/黑汤）
-- 答案逐层揭示功能
-- 适合聚会、团建活动
+- 支持人机对战（三种难度）
+- 支持双人对战
+- 先连五子者胜
 
-访问：`turtle-soup.html`
+访问：`/gomoku`
 
 ---
 
@@ -67,15 +54,12 @@ npm run dev
 
 ```bash
 npm run build
-npm run start
+npm start
 ```
 
-### GitHub Pages 部署
+### Vercel 部署
 
-1. Fork 本仓库
-2. 进入 Settings → Pages
-3. Source 选择 `Deploy from a branch`，Branch 选择 `main`
-4. 等待部署完成
+项目已配置 `vercel.json`，可直接部署到 Vercel。
 
 ---
 
@@ -84,7 +68,7 @@ npm run start
 - **前端框架**: Next.js App Router + React + TypeScript
 - **样式**: Tailwind CSS
 - **图标**: lucide-react
-- **样式**: Apple 黑白商务风格
+- **风格**: Apple 黑白商务风格
 - **字体**: DM Sans + Playfair Display
 - **托管**: Vercel
 
@@ -94,31 +78,19 @@ npm run start
 
 ```
 PlayAI/
-├── app/                    # Next.js App Router
-├── components/             # 共享组件与客户端逻辑
+├── app/                    # Next.js App Router（页面）
+├── components/             # 共享组件
 ├── lib/                    # 共享数据和工具函数
-├── api/                    # 原有 Vercel Serverless 参考实现
-├── *.html                  # 旧版静态页面，当前保留作迁移参考
 ├── README.md               # 本文档
 └── LICENSE                 # MIT 协议
 ```
 
 ---
 
-## 配置说明
-
-### API 路由
-
-- RSS 代理：`/api/rss-proxy?url=https://example.com/feed`
-- 百度翻译代理：`/api/translate`
-
----
-
 ## 注意事项
 
-1. 旧版 HTML 文件当前仍保留在仓库中，方便逐页对照迁移，但新开发应基于 Next.js 目录结构进行。
-2. 首轮迁移目标是界面与结构稳定，不是一次性重写所有工具逻辑。
-3. docs/ 知识库暂未纳入 Next.js 主站路由，后续会单独决定保留静态方案还是迁到 MDX。
+1. 所有游戏均在浏览器本地运行，无需服务器端 API。
+2. 游戏进度不保存，刷新页面即重置。
 
 ---
 
@@ -135,4 +107,4 @@ PlayAI/
 
 ---
 
-如果觉得这个工具箱有用，欢迎 Star ⭐ 支持！
+如果觉得这个小游戏合集有趣，欢迎 Star ⭐ 支持！
