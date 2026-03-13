@@ -643,11 +643,11 @@ export function CatchTheCatGame() {
   const currentConfig = DIFFICULTY_SETTINGS[difficulty];
 
   return (
-    <div className="mx-auto max-w-xl">
+    <div className="mx-auto max-w-xl animate-fade-in-up">
       <style jsx>{`
         .game-board-shell {
           background:
-            radial-gradient(circle at top, rgba(0, 113, 227, 0.12), transparent 42%),
+            radial-gradient(circle at top, rgba(255, 173, 133, 0.12), transparent 42%),
             radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
         }
 
@@ -670,13 +670,13 @@ export function CatchTheCatGame() {
           height: 2.7rem;
           border-radius: 9999px;
           border: 1px solid rgba(255, 255, 255, 0.75);
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px rgba(17, 24, 39, 0.08);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 18px rgba(139, 111, 71, 0.08);
           transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .game-cell:hover:not(.occupied):not(.cat) {
           transform: translateY(-1px) scale(1.04);
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 12px 22px rgba(0, 113, 227, 0.16);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 12px 22px rgba(255, 173, 133, 0.2);
         }
 
         .cat-icon {
@@ -696,15 +696,15 @@ export function CatchTheCatGame() {
         }
 
         .wall {
-          background: radial-gradient(circle at 30% 30%, #4b4b4f 0%, #1d1d1f 70%);
+          background: radial-gradient(circle at 30% 30%, #8B6F47 0%, #4A3728 70%);
         }
 
         .board-edge {
-          background: radial-gradient(circle at 30% 30%, #eff7ff 0%, #d7e9ff 72%);
+          background: radial-gradient(circle at 30% 30%, #FFF8F0 0%, #F5E6D3 72%);
         }
 
         .board-empty {
-          background: radial-gradient(circle at 30% 30%, #ffffff 0%, #eff0f6 72%);
+          background: radial-gradient(circle at 30% 30%, #ffffff 0%, #FFF1E6 72%);
         }
 
         .win-glow {
@@ -721,16 +721,7 @@ export function CatchTheCatGame() {
 
         .difficulty-chip:focus {
           outline: none;
-          box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
-        }
-
-        .stats-card {
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 247, 0.9));
-        }
-
-        .stats-card.active {
-          border-color: rgba(0, 113, 227, 0.25);
-          box-shadow: 0 14px 32px rgba(0, 113, 227, 0.1);
+          box-shadow: 0 0 0 4px rgba(255, 173, 133, 0.2);
         }
 
         @media (max-width: 640px) {
@@ -745,38 +736,39 @@ export function CatchTheCatGame() {
         }
       `}</style>
 
-      <div className="mb-8 text-center animate-fade-in-up">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-2 shadow-sm">
-          <PawPrint className="h-4 w-4 text-apple-blue" />
-          <span className="text-sm font-medium">益智游戏</span>
+      {/* 标题区 */}
+      <div className="mb-6 text-center">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-warm-border bg-white/80 px-4 py-1.5 text-base font-semibold text-warm-brown backdrop-blur-sm">
+          <PawPrint className="h-4 w-4" /> 益智游戏
         </div>
-        <h1 className="mb-2 text-3xl font-semibold">围住小猫</h1>
-        <p className="text-sm text-apple-text">蜂窝圆点版更接近原作视觉，小猫还会故意摆出诱导走位，专门骗你下错那一堵墙。</p>
+        <h1 className="mb-2 font-zcool text-3xl text-warm-dark">围住小猫</h1>
+        <p className="text-base text-warm-text">蜂窝圆点版更接近原作视觉，小猫还会故意摆出诱导走位，专门骗你下错那一堵墙。</p>
       </div>
 
-      <div className="mb-6 space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm animate-fade-in-up">
+      {/* 控制面板 */}
+      <div className="mb-4 space-y-4 rounded-2xl border border-warm-border/60 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="text-center">
-            <p className="mb-1 text-xs text-apple-text">步数</p>
-            <p className="text-2xl font-semibold">{gameState.stepCount}</p>
+            <p className="text-xs text-warm-text">步数</p>
+            <p className="font-zcool text-2xl text-warm-dark">{gameState.stepCount}</p>
           </div>
           <div className="text-center">
-            <p className="mb-1 text-xs text-apple-text">状态</p>
-            <p className={`text-sm font-medium ${gameState.gameOver ? (gameState.didWin ? "text-green-500" : "text-red-500") : "text-apple-blue"}`}>
+            <p className="text-xs text-warm-text">状态</p>
+            <p className={`text-sm font-medium ${gameState.gameOver ? (gameState.didWin ? "text-green-500" : "text-red-500") : "text-warm-peach"}`}>
               {gameState.gameOver ? (gameState.didWin ? "胜利！🎉" : "失败😢") : "进行中"}
             </p>
           </div>
           <div className="text-center">
-            <p className="mb-1 text-xs text-apple-text">难度</p>
-            <p className="text-sm font-medium text-apple-dark">{currentConfig.label}</p>
+            <p className="text-xs text-warm-text">难度</p>
+            <p className="text-sm font-medium text-warm-dark">{currentConfig.label}</p>
           </div>
-          <button type="button" onClick={() => resetGame()} className="rounded-full bg-apple-dark px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800">
-            <RotateCcw className="mr-1 inline-block h-4 w-4" />重置
+          <button type="button" onClick={() => resetGame()} className="flex items-center gap-1.5 rounded-full bg-warm-dark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-warm-brown">
+            <RotateCcw className="h-4 w-4" />重置
           </button>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs uppercase tracking-[0.24em] text-apple-text">猫猫脑回路</span>
+          <span className="text-xs text-warm-text">猫猫脑回路</span>
           {Object.entries(DIFFICULTY_SETTINGS).map(([key, config]) => {
             const typedKey = key as Difficulty;
             const isActive = typedKey === difficulty;
@@ -786,66 +778,22 @@ export function CatchTheCatGame() {
                 key={key}
                 type="button"
                 onClick={() => handleDifficultyChange(typedKey)}
-                className={`difficulty-chip rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                className={`difficulty-chip rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? "border-apple-blue bg-apple-blue text-white shadow-sm"
-                    : "border-gray-200 bg-gray-50 text-apple-dark hover:bg-gray-100"
+                    ? "border-warm-peach bg-warm-peach text-white"
+                    : "border-warm-border bg-white text-warm-text hover:bg-warm-light"
                 }`}
               >
                 {config.label}
               </button>
             );
           })}
-          <span className="ml-auto text-xs text-apple-text">{currentConfig.hint}</span>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="stats-card rounded-2xl border border-gray-100 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.22em] text-apple-text">本地战绩</p>
-              <ChartLine className="h-4 w-4 text-apple-blue" />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <p className="mb-1 text-[11px] text-apple-text">总局数</p>
-                <p className="text-xl font-semibold">{stats.totalGames}</p>
-              </div>
-              <div>
-                <p className="mb-1 text-[11px] text-apple-text">胜率</p>
-                <p className="text-xl font-semibold">{getWinRate(stats.wins, stats.totalGames)}</p>
-              </div>
-              <div>
-                <p className="mb-1 text-[11px] text-apple-text">最佳纪录</p>
-                <p className="text-xl font-semibold">{getBestRecordSummary(stats)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="stats-card rounded-2xl border border-gray-100 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.22em] text-apple-text">难度纪录</p>
-              <Trophy className="h-4 w-4 text-amber-500" />
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              {Object.entries(DIFFICULTY_SETTINGS).map(([key, config]) => {
-                const typedKey = key as Difficulty;
-                const item = stats.byDifficulty[typedKey];
-
-                return (
-                  <div key={key} className={`stats-card rounded-2xl border border-gray-100 px-3 py-3 ${typedKey === difficulty ? "active" : ""}`}>
-                    <p className="mb-1 text-xs font-semibold">{config.label}</p>
-                    <p className="text-[11px] text-apple-text">{getWinRate(item.wins, item.games)}</p>
-                    <p className="mt-1 text-[11px] text-apple-text">{item.games}局</p>
-                    <p className="mt-2 text-sm font-semibold">{item.bestSteps === null ? "--" : `${item.bestSteps}步`}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <span className="ml-auto text-xs text-warm-text">{currentConfig.hint}</span>
         </div>
       </div>
 
-      <div className={`game-board-shell mx-auto animate-fade-in-up rounded-3xl border border-gray-100 p-4 shadow-lg sm:p-5 ${gameState.gameOver ? (gameState.didWin ? "win-glow" : "lose-glow") : ""}`} style={{ width: "fit-content" }}>
+      {/* 游戏棋盘 */}
+      <div className={`game-board-shell mx-auto rounded-3xl border border-warm-border/60 p-4 shadow-sm backdrop-blur-sm sm:p-5 ${gameState.gameOver ? (gameState.didWin ? "win-glow" : "lose-glow") : ""}`} style={{ width: "fit-content" }}>
         {gameState.board.map((row, y) => (
           <div key={y} className={`hex-row ${y % 2 === 1 ? "offset" : ""}`}>
             {row.map((cell, x) => {
@@ -864,7 +812,7 @@ export function CatchTheCatGame() {
                   } ${isWall || isCat || gameState.gameOver ? "cursor-default" : "cursor-pointer"}`}
                   aria-label={`第 ${y + 1} 行，第 ${x + 1} 列`}
                 >
-                  {isCat ? <Cat className="cat-icon h-6 w-6 text-apple-dark" /> : null}
+                  {isCat ? <Cat className="cat-icon h-6 w-6 text-warm-dark" /> : null}
                 </button>
               );
             })}
@@ -872,16 +820,60 @@ export function CatchTheCatGame() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-gray-100 bg-white/50 p-5 animate-fade-in-up">
-        <h3 className="mb-3 flex items-center gap-2 font-semibold">
-          <Info className="h-5 w-5 text-apple-blue" />
-          游戏规则
+      {/* 统计区 */}
+      <div className="mt-4 mb-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-warm-border/60 bg-white/80 p-4 backdrop-blur-sm">
+          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warm-brown">
+            <ChartLine className="h-4 w-4" /> 本地战绩
+          </div>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div>
+              <p className="text-xs text-warm-text">总局数</p>
+              <p className="font-zcool text-xl text-warm-dark">{stats.totalGames}</p>
+            </div>
+            <div>
+              <p className="text-xs text-warm-text">胜率</p>
+              <p className="font-zcool text-xl text-warm-dark">{getWinRate(stats.wins, stats.totalGames)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-warm-text">最佳纪录</p>
+              <p className="font-zcool text-xl text-warm-dark">{getBestRecordSummary(stats)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-warm-border/60 bg-white/80 p-4 backdrop-blur-sm">
+          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warm-brown">
+            <Trophy className="h-4 w-4" /> 难度纪录
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {Object.entries(DIFFICULTY_SETTINGS).map(([key, config]) => {
+              const typedKey = key as Difficulty;
+              const item = stats.byDifficulty[typedKey];
+
+              return (
+                <div key={key} className={`rounded-2xl border px-3 py-3 ${typedKey === difficulty ? "border-warm-peach/40 bg-warm-light/60" : "border-warm-border/40 bg-white/60"}`}>
+                  <p className="mb-1 text-xs font-semibold text-warm-dark">{config.label}</p>
+                  <p className="text-xs text-warm-text">{getWinRate(item.wins, item.games)}</p>
+                  <p className="mt-1 text-xs text-warm-text">{item.games}局</p>
+                  <p className="mt-2 text-sm font-semibold text-warm-dark">{item.bestSteps === null ? "--" : `${item.bestSteps}步`}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 规则说明 */}
+      <div className="rounded-2xl border border-warm-border/60 bg-white/50 p-5 backdrop-blur-sm">
+        <h3 className="mb-3 flex items-center gap-2 font-semibold text-warm-dark">
+          <Info className="h-4 w-4" /> 游戏规则
         </h3>
-        <ul className="space-y-2 text-sm text-apple-text">
-          <li>点击圆形蜂窝空格放置障碍物，视觉和节奏都更接近原作。</li>
-          <li>每放置一个障碍物，小猫会先看眼前，再预判你下一堵墙后的局面。</li>
-          <li>老六模式会故意站在你最想封却又很难真正封死的位置，专门诱导你失误。</li>
-          <li>页面会自动记录本地胜率和各难度最佳步数，能直观看出难度差异。</li>
+        <ul className="space-y-2 text-sm leading-relaxed text-warm-text">
+          <li>• 点击圆形蜂窝空格放置障碍物，视觉和节奏都更接近原作。</li>
+          <li>• 每放置一个障碍物，小猫会先看眼前，再预判你下一堵墙后的局面。</li>
+          <li>• 老六模式会故意站在你最想封却又很难真正封死的位置，专门诱导你失误。</li>
+          <li>• 页面会自动记录本地胜率和各难度最佳步数，能直观看出难度差异。</li>
         </ul>
       </div>
     </div>

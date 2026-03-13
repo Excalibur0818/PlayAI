@@ -538,8 +538,8 @@ export function GomokuGame() {
         ? "text-red-500"
         : "text-amber-500"
     : thinking
-      ? "text-indigo-500"
-      : "text-apple-blue";
+      ? "text-warm-peach"
+      : "text-warm-peach";
 
   const ringClass = game.over
     ? game.winner === 1
@@ -547,10 +547,10 @@ export function GomokuGame() {
       : game.winner === 2
         ? "ring-2 ring-red-400/50"
         : "ring-2 ring-amber-400/50"
-    : "";
+    : "ring-1 ring-warm-border/40";
 
   return (
-    <div className="mx-auto w-full max-w-full px-1 sm:px-2">
+    <div className="mx-auto w-full max-w-xl px-1 sm:px-2 animate-fade-in-up">
       <style jsx>{`
         .gomoku-board-bg {
           background:
@@ -614,36 +614,35 @@ export function GomokuGame() {
       `}</style>
 
       {/* ── 标题区 ──────────────────────────────── */}
-      <div className="mb-8 animate-fade-in-up text-center">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gray-100 bg-white px-4 py-2 shadow-sm">
-          <Target className="h-4 w-4 text-apple-blue" />
-          <span className="text-sm font-medium">益智游戏</span>
+      <div className="mb-6 text-center">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-warm-border bg-white/80 px-4 py-1.5 text-base font-semibold text-warm-brown backdrop-blur-sm">
+          <Target className="h-4 w-4" /> 益智游戏
         </div>
-        <h1 className="mb-2 text-3xl font-semibold">五子棋</h1>
-        <p className="text-sm text-apple-text">
+        <h1 className="mb-2 font-zcool text-3xl text-warm-dark">五子棋</h1>
+        <p className="text-base text-warm-text">
           经典策略对弈，先在横竖斜任一方向连成五子者胜。支持人机与双人对战。
         </p>
       </div>
 
       {/* ── 控制面板 ──────────────────────────────── */}
-      <div className="mb-6 animate-fade-in-up space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="mb-4 space-y-4 rounded-2xl border border-warm-border/60 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
         {/* 状态行 */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-[56px] text-center">
-            <p className="mb-1 text-xs text-apple-text">手数</p>
-            <p className="text-2xl font-semibold">{game.moves.length}</p>
+            <p className="text-xs text-warm-text">手数</p>
+            <p className="font-zcool text-2xl text-warm-dark">{game.moves.length}</p>
           </div>
 
           <div className="min-w-[90px] text-center">
-            <p className="mb-1 text-xs text-apple-text">状态</p>
+            <p className="text-xs text-warm-text">状态</p>
             <p className={`text-sm font-medium ${statusColor}`}>
               {thinking ? (
                 <span className="inline-flex items-center gap-1">
                   AI 思考中
                   <span className="ml-0.5 inline-flex gap-0.5">
-                    <span className="gomoku-dot1 inline-block h-1 w-1 rounded-full bg-indigo-500" />
-                    <span className="gomoku-dot2 inline-block h-1 w-1 rounded-full bg-indigo-500" />
-                    <span className="gomoku-dot3 inline-block h-1 w-1 rounded-full bg-indigo-500" />
+                    <span className="gomoku-dot1 inline-block h-1 w-1 rounded-full bg-warm-peach" />
+                    <span className="gomoku-dot2 inline-block h-1 w-1 rounded-full bg-warm-peach" />
+                    <span className="gomoku-dot3 inline-block h-1 w-1 rounded-full bg-warm-peach" />
                   </span>
                 </span>
               ) : (
@@ -657,7 +656,7 @@ export function GomokuGame() {
               type="button"
               onClick={handleUndo}
               disabled={!canUndo}
-              className="rounded-full border border-gray-200 px-3 py-2 text-sm font-medium text-apple-dark transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-full border border-warm-border px-3 py-2 text-sm font-medium text-warm-dark transition-colors hover:bg-warm-light disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Undo2 className="mr-1 inline-block h-4 w-4" />
               悔棋
@@ -665,9 +664,9 @@ export function GomokuGame() {
             <button
               type="button"
               onClick={reset}
-              className="rounded-full bg-apple-dark px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+              className="flex items-center gap-1.5 rounded-full bg-warm-dark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-warm-brown"
             >
-              <RotateCcw className="mr-1 inline-block h-4 w-4" />
+              <RotateCcw className="h-4 w-4" />
               新局
             </button>
           </div>
@@ -675,7 +674,7 @@ export function GomokuGame() {
 
         {/* 模式切换 */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs uppercase tracking-[0.24em] text-apple-text">
+          <span className="text-xs text-warm-text">
             模式
           </span>
           {(
@@ -688,13 +687,13 @@ export function GomokuGame() {
               key={k}
               type="button"
               onClick={() => switchMode(k)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-sm font-medium transition-all ${
+              className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                 mode === k
-                  ? "border-apple-blue bg-apple-blue text-white shadow-sm"
-                  : "border-gray-200 bg-gray-50 text-apple-dark hover:bg-gray-100"
+                  ? "border-warm-peach bg-warm-peach text-white"
+                  : "border-warm-border bg-white text-warm-text hover:bg-warm-light"
               }`}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
               {label}
             </button>
           ))}
@@ -703,7 +702,7 @@ export function GomokuGame() {
         {/* 难度（仅人机） */}
         {mode === "pve" && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.24em] text-apple-text">
+            <span className="text-xs text-warm-text">
               难度
             </span>
             {(
@@ -716,16 +715,16 @@ export function GomokuGame() {
                 key={k}
                 type="button"
                 onClick={() => switchDiff(k)}
-                className={`rounded-full border px-3 py-2 text-sm font-medium transition-all ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                   diff === k
-                    ? "border-apple-blue bg-apple-blue text-white shadow-sm"
-                    : "border-gray-200 bg-gray-50 text-apple-dark hover:bg-gray-100"
+                    ? "border-warm-peach bg-warm-peach text-white"
+                    : "border-warm-border bg-white text-warm-text hover:bg-warm-light"
                 }`}
               >
                 {cfg.label}
               </button>
             ))}
-            <span className="ml-auto text-xs text-apple-text">
+            <span className="ml-auto text-xs text-warm-text">
               {DIFF_CFG[diff].hint}
             </span>
           </div>
@@ -890,12 +889,12 @@ export function GomokuGame() {
       </div>
 
       {/* ── 当前回合指示 ──────────────────────────── */}
-      <div className="mt-5 flex animate-fade-in-up justify-center gap-6">
+      <div className="mt-5 flex justify-center gap-6">
         <div
           className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 ${
             game.current === 1 && !game.over
               ? "scale-105 border-gray-800 bg-gray-900 text-white shadow-lg"
-              : "border-gray-200 bg-white text-apple-text"
+              : "border-warm-border bg-white/80 text-warm-text"
           }`}
         >
           <span className="inline-block h-3.5 w-3.5 rounded-full bg-gray-900 ring-1 ring-gray-600" />
@@ -907,7 +906,7 @@ export function GomokuGame() {
           className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-all duration-300 ${
             game.current === 2 && !game.over
               ? "scale-105 border-gray-300 bg-white text-gray-900 shadow-lg ring-2 ring-gray-200"
-              : "border-gray-200 bg-white text-apple-text"
+              : "border-warm-border bg-white/80 text-warm-text"
           }`}
         >
           <span className="inline-block h-3.5 w-3.5 rounded-full bg-white ring-2 ring-gray-300" />
@@ -917,63 +916,64 @@ export function GomokuGame() {
         </div>
       </div>
 
-      {/* ── 战绩总览 & 分难度（仅人机，紧凑布局） ───── */}
+      {/* ── 战绩总览 & 分难度（仅人机） ───── */}
       {mode === "pve" && (
-        <div className="mt-4 flex animate-fade-in-up flex-wrap items-center justify-center gap-4 rounded-xl border border-gray-100 bg-white/70 px-4 py-3 text-sm">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-apple-text">
-              <ChartLine className="h-3.5 w-3.5" />
-              战绩
-            </span>
-            <span className="font-medium">{stats.total} 局</span>
-            <span className="text-apple-text">
-              胜率 {pct(stats.wins, stats.total)}
-            </span>
-            <span className="text-apple-text">
-              {stats.wins}/{stats.losses}/{stats.draws}
-            </span>
+        <div className="mt-4 mb-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-warm-border/60 bg-white/80 p-4 backdrop-blur-sm">
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warm-brown">
+              <ChartLine className="h-4 w-4" /> 游戏统计
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div>
+                <p className="text-xs text-warm-text">总局数</p>
+                <p className="font-zcool text-xl text-warm-dark">{stats.total}</p>
+              </div>
+              <div>
+                <p className="text-xs text-warm-text">胜率</p>
+                <p className="font-zcool text-xl text-warm-dark">{pct(stats.wins, stats.total)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-warm-text">胜/负/平</p>
+                <p className="font-zcool text-xl text-warm-dark">{stats.wins}/{stats.losses}/{stats.draws}</p>
+              </div>
+            </div>
           </div>
-          <span className="h-4 w-px bg-gray-200" />
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 text-apple-text">
-              <Trophy className="h-3.5 w-3.5" />
-              分难度
-            </span>
-            {(
-              Object.entries(DIFF_CFG) as [
-                Difficulty,
-                (typeof DIFF_CFG)["easy"],
-              ][]
-            ).map(([k, cfg]) => {
-              const d = stats.byDiff[k];
-              return (
-                <span
-                  key={k}
-                  className={`rounded-lg border px-2.5 py-1 text-xs ${
-                    k === diff
-                      ? "border-apple-blue/30 bg-apple-blue/5 font-medium"
-                      : "border-gray-100 text-apple-text"
-                  }`}
-                >
-                  {cfg.label} {pct(d.wins, d.games)} ({d.games}局)
-                </span>
-              );
-            })}
+          <div className="rounded-2xl border border-warm-border/60 bg-white/80 p-4 backdrop-blur-sm">
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-warm-brown">
+              <Trophy className="h-4 w-4" /> 分难度
+            </div>
+            <div className="space-y-1 text-sm">
+              {(
+                Object.entries(DIFF_CFG) as [
+                  Difficulty,
+                  (typeof DIFF_CFG)["easy"],
+                ][]
+              ).map(([k, cfg]) => {
+                const d = stats.byDiff[k];
+                return (
+                  <div key={k} className="flex justify-between">
+                    <span className="text-warm-text">{cfg.label}</span>
+                    <span className={`font-semibold ${k === diff ? "text-warm-peach" : "text-warm-dark"}`}>
+                      {pct(d.wins, d.games)} ({d.games}局)
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
 
       {/* ── 规则说明 ──────────────────────────────── */}
-      <div className="mt-8 animate-fade-in-up rounded-2xl border border-gray-100 bg-white/50 p-5">
-        <h3 className="mb-3 flex items-center gap-2 font-semibold">
-          <Info className="h-5 w-5 text-apple-blue" />
-          游戏规则
+      <div className="mt-4 rounded-2xl border border-warm-border/60 bg-white/50 p-5 backdrop-blur-sm">
+        <h3 className="mb-3 flex items-center gap-2 font-semibold text-warm-dark">
+          <Info className="h-4 w-4" /> 游戏规则
         </h3>
-        <ul className="space-y-2 text-sm text-apple-text">
-          <li>黑棋先行，双方轮流在棋盘交叉点上落子。</li>
-          <li>先在横、竖或斜方向上连成五子（或更多）的一方获胜。</li>
-          <li>人机模式下你执黑棋，AI 执白棋。可自由切换三种难度。</li>
-          <li>支持悔棋；人机模式下悔棋会同时撤回你和 AI 的各一步。</li>
+        <ul className="space-y-2 text-sm leading-relaxed text-warm-text">
+          <li>• 黑棋先行，双方轮流在棋盘交叉点上落子。</li>
+          <li>• 先在横、竖或斜方向上连成五子（或更多）的一方获胜。</li>
+          <li>• 人机模式下你执黑棋，AI 执白棋。可自由切换三种难度。</li>
+          <li>• 支持悔棋；人机模式下悔棋会同时撤回你和 AI 的各一步。</li>
         </ul>
       </div>
     </div>

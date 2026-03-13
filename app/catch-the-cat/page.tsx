@@ -1,8 +1,11 @@
 import { CatchTheCatGame } from "@/components/catch-the-cat-game";
 
+/**
+ * 围住小猫游戏页 - 暖色温馨背景
+ */
 export default function CatchTheCatPage() {
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#ffffff_0%,#f5f5f7_100%)] px-4 pb-12 pt-28 text-apple-dark">
+    <main className="hero-warm hero-warm-glow min-h-screen px-4 pb-12 pt-28 text-warm-dark">
       <CatchTheCatGame />
     </main>
   );

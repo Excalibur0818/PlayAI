@@ -1,9 +1,11 @@
 import { GomokuGame } from "@/components/gomoku-game";
 
-/** 五子棋游戏页 */
+/**
+ * 五子棋游戏页 - 暖色温馨背景
+ */
 export default function GomokuPage() {
   return (
-    <main className="min-h-screen w-full bg-[linear-gradient(180deg,#ffffff_0%,#f5f5f7_100%)] px-2 pb-12 pt-28 text-apple-dark">
+    <main className="hero-warm hero-warm-glow min-h-screen w-full px-2 pb-12 pt-28 text-warm-dark">
       <GomokuGame />
     </main>
   );

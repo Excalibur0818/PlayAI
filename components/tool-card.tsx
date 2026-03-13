@@ -10,27 +10,37 @@ type ToolCardProps = {
   gradient: string;
 };
 
+/**
+ * 游戏卡片组件 - 暖色系设计，hover 时上浮并显示温暖阴影
+ */
 export function ToolCard({ href, title, description, badge, icon, gradient }: ToolCardProps) {
   return (
-    <Link href={href} className="tool-card card-hover group block overflow-hidden rounded-3xl border border-gray-100/50 bg-white shadow-sm">
-      <div className="relative h-44 overflow-hidden">
+    <Link
+      href={href}
+      className="card-warm game-card group block overflow-hidden"
+    >
+      <div className="relative h-36 overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.2),transparent_60%)]" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
             {icon}
           </div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>
 
-      <div className="p-6">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold transition-colors group-hover:text-apple-blue">{title}</h3>
-          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-apple-text">{badge}</span>
+      <div className="p-5">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <h3 className="font-zcool text-lg transition-colors group-hover:text-warm-peach">
+            {title}
+          </h3>
+          <span className="rounded-full bg-warm-light px-2.5 py-0.5 text-sm font-semibold text-warm-brown">
+            {badge}
+          </span>
         </div>
-        <p className="mb-5 text-sm leading-relaxed text-apple-text">{description}</p>
-        <span className="inline-flex items-center text-sm font-semibold text-apple-blue transition-transform group-hover:translate-x-1">
-          立即使用 <span className="ml-2">→</span>
+        <p className="mb-4 text-base leading-relaxed text-warm-text">{description}</p>
+        <span className="inline-flex items-center text-base font-bold text-warm-peach transition-transform group-hover:translate-x-1">
+          开始游戏 <span className="ml-2">→</span>
         </span>
       </div>
     </Link>
