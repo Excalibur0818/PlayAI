@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Cat, Target, Gem } from "lucide-react";
+import { Cat, Target, Gem, Grid3X3 } from "lucide-react";
 
 /**
  * 游戏数据类型定义
@@ -44,5 +44,14 @@ export const tools: GameItem[] = [
     gradient: "from-emerald-400 to-teal-500",
     icon: <Gem className="h-9 w-9 text-white" />,
     emoji: "💎",
+  },
+  {
+    href: "/sudoku",
+    title: "数独",
+    description: "经典数字逻辑游戏。支持四宫、六宫、九宫三种棋盘，锻炼逻辑推理能力！",
+    badge: "逻辑",
+    gradient: "from-violet-400 to-purple-500",
+    icon: <Grid3X3 className="h-9 w-9 text-white" />,
+    emoji: "🔢",
   },
 ];
