@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Cat, Target, Gem, Grid3X3 } from "lucide-react";
+import { Cat, Target, Gem, Grid3X3, Sparkles } from "lucide-react";
 
 /**
  * 游戏数据类型定义
@@ -53,5 +53,14 @@ export const tools: GameItem[] = [
     gradient: "from-violet-400 to-purple-500",
     icon: <Grid3X3 className="h-9 w-9 text-white" />,
     emoji: "🔢",
+  },
+  {
+    href: "/pop-star",
+    title: "消灭星星",
+    description: "点击相连同色星砖获取高分，挑战关卡目标，体验经典爽快消除。",
+    badge: "休闲",
+    gradient: "from-orange-300 via-rose-300 to-pink-400",
+    icon: <Sparkles className="h-9 w-9 text-white" />,
+    emoji: "⭐",
   },
 ];

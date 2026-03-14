@@ -10,6 +10,7 @@ const marqueeItems = [
   { emoji: "🐱", label: "围住小猫", color: "from-amber-400 to-orange-400" },
   { emoji: "⚫", label: "五子棋", color: "from-rose-400 to-pink-400" },
   { emoji: "💎", label: "宝石消消乐", color: "from-emerald-400 to-teal-400" },
+  { emoji: "⭐", label: "消灭星星", color: "from-orange-300 to-rose-300" },
   { emoji: "🎮", label: "更多游戏", color: "from-warm-peach to-warm-amber" },
   { emoji: "🎲", label: "休闲娱乐", color: "from-warm-pink to-rose-300" },
   { emoji: "🏆", label: "挑战自我", color: "from-amber-300 to-yellow-400" },
